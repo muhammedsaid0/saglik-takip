@@ -484,6 +484,8 @@ function renderProfil(d){
 }
 
 // ── ÖLÇÜM FORMU ──────────────────────────────────────────────────────────────
+// Grafik için (boy yok)
+// Grafik serileri (boy grafike girmiyor)
 const OLCUMLER=[
   {key:"kilo",lbl:"Kilo",unit:"kg",renk:"#fff"},
   {key:"bel",lbl:"Bel",unit:"cm",renk:"#a78bfa"},
@@ -511,6 +513,11 @@ function renderOlcumFormu(){
         <input class="inp" type="date" id="olcum-tarih" value="${f.tarih}" style="margin-top:4px"/>
       </div>
       <div class="grid2">
+        <!-- Boy ayrıca - tam genişlik -->
+        <div style="grid-column:1/-1">
+          <label class="lbl" style="color:#e2e8f0">Boy (cm)</label>
+          <input class="inp" type="number" inputmode="decimal" id="olcum-boy" value="${f.boy||""}" placeholder="175" style="border-color:${f.boy?"#e2e8f044":"#333"}"/>
+        </div>
         ${OLCUMLER.map(o=>`
         <div>
           <label class="lbl" style="color:${o.renk}">${o.lbl} (${o.unit})</label>
@@ -1397,7 +1404,7 @@ function attachEvents(){
     const tarih=document.getElementById("olcum-tarih")?.value||f.tarih;
     const kayit={id:Date.now(),tarih};
     let dolu=false;
-    ["kilo","boy","bel","boyun","kalca","gogus","omuz","biceps","uyluk","kalf"].forEach(k=>{
+    ["boy","kilo","bel","boyun","kalca","gogus","omuz","biceps","uyluk","kalf"].forEach(k=>{
       const v=document.getElementById("olcum-"+k)?.value;
       if(v){kayit[k]=parseFloat(v);dolu=true;}
     });
@@ -1411,7 +1418,7 @@ function attachEvents(){
     }
     state.olcumGecmisi.sort((a,b)=>a.tarih.localeCompare(b.tarih));
     localStorage.setItem("s_olcum",JSON.stringify(state.olcumGecmisi));
-    state.olcumForm={ac:false,tarih:new Date().toISOString().split("T")[0],kilo:"",bel:"",gogus:"",omuz:"",biceps:"",uyluk:"",kalf:""};
+    state.olcumForm={ac:false,tarih:new Date().toISOString().split("T")[0],kilo:"",boy:"",bel:"",boyun:"",kalca:"",gogus:"",omuz:"",biceps:"",uyluk:"",kalf:""};
     render();
   });
 
