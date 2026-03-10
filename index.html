@@ -281,7 +281,7 @@ function getDerived(){
   const topYag=state.ogunler.reduce((s,o)=>s+o.yag,0);
   const topYak=state.antrenmanlar.reduce((s,a)=>s+a.yakilanKalori,0);
   const topUyu=state.uyku.reduce((s,u)=>s+u.sure,0);
-  const k=parseFloat(p.kilo)||0;
+  const k=parseFloat(profilBirlestir.kilo)||parseFloat(p.kilo)||0;
   const yo=parseFloat(yag)||0;
   const hYag=parseFloat(state.hedefYag)||(p.cinsiyet==="erkek"?15:22);
   const yakılacak=Math.max(0,(k*yo/100)-(k*hYag/100));
@@ -298,7 +298,7 @@ function getDerived(){
   const hedefKcal=tdee?Math.max(tdee-(gerekliAcik||Math.round(tdee*0.15)),p.cinsiyet==="erkek"?1500:1200):1800;
   const adimMesafe=((state.adim*0.78)/1000).toFixed(2);
   const adimKcal=Math.round(state.adim*0.04*(k/70||1));
-  return{bmi,yag,bmr,tdee,topKal,topPro,topKarb,topYag,topYak,topUyu,k,yo,hYag,yakılacak,gunKalani,gerekliAcik,hafHiz,hedefKcal,adimMesafe,adimKcal};
+  return{bmi,yag,bmr,tdee,topKal,topPro,topKarb,topYag,topYak,topUyu,k,yo,hYag,yakılacak,gunKalani,gerekliAcik,hafHiz,hedefKcal,adimMesafe,adimKcal,profil:p};
 }
 
 // ── SVG YARDIMCILARI ──────────────────────────────────────────────────────────
@@ -927,18 +927,22 @@ function renderTakip(d){
 // ── TAB 4: YAĞ YAKIMI ────────────────────────────────────────────────────────
 function renderYagYakim(d){
   const p=state.profil;
-  if(!d.k||!d.yo)return`
+  if(!d.k)return`
     <div class="card" style="text-align:center;padding:30px 16px">
       <div style="font-size:36px;margin-bottom:12px">⚠️</div>
-      <div style="color:#facc15;font-weight:700;font-size:15px;margin-bottom:6px">Profil bilgilerin eksik!</div>
-      <div style="color:#666;font-size:13px">Profil sekmesini doldurun (boy, kilo, bel, boyun).</div>
+      <div style="color:#facc15;font-weight:700;font-size:15px;margin-bottom:6px">Kilo verisi eksik!</div>
+      <div style="color:#666;font-size:13px;line-height:1.6">Yağ yakım hesabı için<br><b style="color:#aaa">Profil → Vücut Ölçüleri</b> bölümüne<br>en az kilo gir.</div>
     </div>`;
 
   const minYag=p.cinsiyet==="erkek"?5:13;
-  const maxYag=Math.max(d.yo-1,minYag+1);
+  const maxYag=d.yo>minYag+1?Math.max(d.yo-1,minYag+1):40;
   const acikRenk=d.gerekliAcik>800?"#f87171":d.gerekliAcik>500?"#facc15":"#4ade80";
 
   return`
+    ${!d.yo?`
+    <div style="background:#1a1000;border:1px solid #facc1544;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:#facc15">
+      ⚠️ Yağ oranı hesabı için Profil → Vücut Ölçüleri'nden boy, bel ve boyun gir. Şimdilik kilo bazlı hesap yapılıyor.
+    </div>`:""}
     <div class="card">
       <div class="card-title">🎯 Hedef Belirle</div>
       <div style="margin-bottom:14px">
