@@ -957,24 +957,34 @@ function renderYagYakim(d){
           <label class="lbl">Hedef Yağ Oranı</label>
           <span style="font-size:20px;font-weight:700">%${d.hYag}</span>
         </div>
-        <input type="range" min="${minYag}" max="${maxYag}" value="${d.hYag}" id="hedef-yag-range" style="accent-color:#fff"/>
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:#555;margin-top:2px">
-          <span>Min %${minYag}</span>
-          <span>Mevcut: %${d.yo}</span>
-        </div>
+
       </div>
 
       <div style="margin-bottom:14px">
-        <div style="background:#1a1a1a;border-radius:99px;height:16px;position:relative">
-          <div style="width:${Math.min(d.hYag/maxYag*100,100)}%;background:#333;height:100%;border-radius:99px;position:relative">
-            <div style="position:absolute;right:-10px;top:-3px;width:22px;height:22px;background:#fff;border-radius:99%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#000">%${d.yo}</div>
+        ${(()=>{
+          const barMax=50;
+          const mevcutPct=(d.yo/barMax)*100;
+          const hedefPct=(d.hYag/barMax)*100;
+          return`
+          <!-- Bar -->
+          <div style="position:relative;height:20px;border-radius:99px;overflow:hidden;margin-bottom:6px">
+            <!-- Sol: 0'dan hedefe kadar YEŞİL -->
+            <div style="position:absolute;left:0;top:0;height:100%;width:${hedefPct}%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div>
+            <!-- Orta: hedeften mevcuta kadar KIRMIZI -->
+            <div style="position:absolute;left:${hedefPct}%;top:0;height:100%;width:${Math.max(mevcutPct-hedefPct,0)}%;background:#f87171"></div>
+            <!-- Sağ: mevcuttan sonrası BEYAZ -->
+            <div style="position:absolute;left:${mevcutPct}%;top:0;height:100%;width:${100-mevcutPct}%;background:#fff"></div>
+            <!-- Mevcut yağ sabit ince çizgi -->
+            <div style="position:absolute;left:${mevcutPct}%;top:0;width:3px;height:100%;background:#000;transform:translateX(-50%);z-index:2"></div>
           </div>
-          <div style="position:absolute;left:calc(${Math.min(d.hYag/maxYag*100,100)}% - 6px);top:-2px;width:12px;height:20px;background:#4ade80;border-radius:99px;box-shadow:0 0 8px #4ade8088"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:8px">
-          <span style="color:#4ade80">🟢 Hedef: %${d.hYag}</span>
-          <span style="color:#fff">📍 Şu an: %${d.yo}</span>
-        </div>
+          <!-- Hedef slider -->
+          <input type="range" min="${minYag}" max="50" step="0.1" value="${d.hYag}" id="hedef-yag-range"
+            style="width:100%;accent-color:#f87171;margin:2px 0"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:6px">
+            <span style="color:#f87171">🎯 Hedef: %${d.hYag}</span>
+            <span style="color:#fff">📍 Mevcut: %${d.yo}</span>
+          </div>`;
+        })()}
       </div>
 
       <div style="margin-bottom:14px">
