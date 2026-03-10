@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Sağlık"/>
+<meta name="theme-color" content="#000000"/>
+<title>Sağlık Takibi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#000;font-family:'DM Sans',sans-serif;color:#fff;overflow:hidden}
+#app{height:100%;display:flex;flex-direction:column}
+input,select,button{font-family:'DM Sans',sans-serif}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:99px;outline:none;width:100%;background:#444}
+input[type=range]::-webkit-slider-runnable-track{height:6px;border-radius:99px;background:#444}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;cursor:pointer;background:#fff;margin-top:-10px;box-shadow:0 0 8px rgba(255,255,255,0.4)}
+input[type=range]::-moz-range-track{height:6px;border-radius:99px;background:#444;border:none}
+input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:none;cursor:pointer}
+input,select{-webkit-appearance:none;appearance:none}
+::-webkit-scrollbar{width:0;height:0}
+.safe-top{padding-top:env(safe-area-inset-top)}
+.safe-bot{padding-bottom:env(safe-area-inset-bottom)}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 12px 0}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.fi{animation:fi .2s ease}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.4}}
+.pu{animation:pu 1.4s infinite}
+.card{background:#111;border:1px solid #333;border-radius:14px;padding:14px;margin-bottom:11px}
+.card-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px}
+.inp{width:100%;background:#000;border:1px solid #333;border-radius:10px;padding:11px 12px;color:#fff;font-size:15px;outline:none}
+.inp::placeholder{color:#444}
+.btn{width:100%;background:#fff;border:none;border-radius:12px;padding:13px;color:#000;font-weight:700;font-size:15px;cursor:pointer}
+.btn-outline{background:#000;border:1px solid #fff;color:#fff}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lbl{font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.8px;display:block;margin-bottom:5px}
+.infobox{background:#000;border-radius:10px;padding:11px 8px;text-align:center}
+.infobox .val{font-size:17px;font-weight:700}
+.infobox .lbl2{font-size:10px;color:#555;margin-top:3px;text-transform:uppercase;letter-spacing:.7px}
+.chip{background:#111;border:1px solid #333;border-radius:10px;padding:8px 10px;min-width:74px;flex-shrink:0}
+.divider{border:none;border-top:1px solid #222;margin:0}
+.tab-btn{flex:1;padding:10px 2px 8px;background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;border-top:2px solid transparent;transition:all .15s;min-width:0}
+.tab-btn.active{border-top-color:#fff;color:#fff}
+.tab-btn:not(.active){color:#555}
+.tab-icon{font-size:21px}
+.tab-label{font-size:9px;letter-spacing:.4px}
+.eg-btn{padding:10px 4px;border-radius:10px;border:1px solid #333;background:#000;color:#fff;cursor:pointer;text-align:center;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.eg-btn.active{border-color:#fff;background:#1a1a1a}
+.kat-btn{padding:6px 12px;border-radius:20px;border:1px solid #333;background:#000;color:#666;cursor:pointer;font-size:11px;white-space:nowrap;font-weight:400}
+.kat-btn.active{border-color:#fff;background:#1a1a1a;color:#fff;font-weight:700}
+.row-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1a1a1a}
+.del-btn{background:none;border:none;color:#f44;cursor:pointer;font-size:22px;padding:0 4px;line-height:1}
+.ring-wrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.ring-label{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.8px}
+select option{background:#111;color:#fff}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="safe-top" style="background:#000;flex-shrink:0"></div>
+
+  <!-- HEADER -->
+  <div id="header" style="background:#000;border-bottom:1px solid #fff;padding:12px 14px 12px;flex-shrink:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <div>
+        <div style="font-size:10px;color:#888;text-transform:uppercase;letter-spacing:2px">Sağlık Takibi</div>
+        <div id="hdr-isim" style="font-size:18px;font-weight:700;margin-top:2px">Hoş Geldin! 👋</div>
+        <div id="hdr-tarih" style="font-size:11px;color:#666"></div>
+      </div>
+      <div id="hdr-kalori" style="text-align:right;display:none">
+        <div style="font-size:9px;color:#666;text-transform:uppercase;letter-spacing:1px">Hedef</div>
+        <div id="hdr-kcal" style="font-size:20px;font-weight:700"></div>
+        <div style="font-size:9px;color:#555">kcal</div>
+      </div>
+    </div>
+    <!-- Mini chips -->
+    <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:2px" id="mini-chips"></div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="scroll" id="content"></div>
+
+  <!-- TAB BAR -->
+  <div style="background:#000;border-top:1px solid #fff;display:flex;flex-shrink:0" class="safe-bot" id="tabbar"></div>
+</div>
+
+<script>
+// ── VERİ ──────────────────────────────────────────────────────────────────────
+const TABS=[
+  {id:0,label:"Profil",ikon:"👤"},
+  {id:1,label:"Beslenme",ikon:"🍽️"},
+  {id:2,label:"Antrenman",ikon:"💪"},
+  {id:3,label:"Takip",ikon:"📊"},
+  {id:4,label:"Yağ Yak",ikon:"🔥"},
+  {id:5,label:"Hafta",ikon:"📅"},
+  {id:7,label:"Program",ikon:"📋"},
+  {id:8,label:"Rapor",ikon:"📤"},
+];
+
+const YIYECEKLER={
+  "🥩 Et & Protein":[
+    {ad:"Tavuk Göğsü (100g)",kalori:165,protein:31,karb:0,yag:3.6},
+    {ad:"Dana Kıyma (100g)",kalori:250,protein:26,karb:0,yag:15},
+    {ad:"Somon (100g)",kalori:208,protein:20,karb:0,yag:13},
+    {ad:"Ton Balığı (100g)",kalori:116,protein:26,karb:0,yag:1},
+    {ad:"Yumurta (1 adet)",kalori:78,protein:6,karb:0.6,yag:5},
+    {ad:"Hindi Göğsü (100g)",kalori:135,protein:30,karb:0,yag:1},
+    {ad:"Tavuk But (100g)",kalori:215,protein:22,karb:0,yag:13},
+    {ad:"Levrek (100g)",kalori:97,protein:18.4,karb:0,yag:2},
+  ],
+  "🌾 Tahıllar":[
+    {ad:"Pirinç (100g pişmiş)",kalori:130,protein:2.7,karb:28,yag:0.3},
+    {ad:"Makarna (100g pişmiş)",kalori:158,protein:5.8,karb:31,yag:0.9},
+    {ad:"Tam Buğday Ekmek (1 dilim)",kalori:69,protein:3.6,karb:12,yag:1.1},
+    {ad:"Yulaf Ezmesi (100g)",kalori:389,protein:17,karb:66,yag:7},
+    {ad:"Bulgur (100g pişmiş)",kalori:83,protein:3.1,karb:18.6,yag:0.2},
+    {ad:"Patates Haşlanmış (100g)",kalori:87,protein:1.9,karb:20,yag:0.1},
+    {ad:"Kinoa (100g pişmiş)",kalori:120,protein:4.4,karb:21.3,yag:1.9},
+  ],
+  "🥦 Sebzeler":[
+    {ad:"Brokoli (100g)",kalori:34,protein:2.8,karb:7,yag:0.4},
+    {ad:"Ispanak (100g)",kalori:23,protein:2.9,karb:3.6,yag:0.4},
+    {ad:"Havuç (100g)",kalori:41,protein:0.9,karb:10,yag:0.2},
+    {ad:"Domates (1 adet)",kalori:22,protein:1.1,karb:4.8,yag:0.2},
+    {ad:"Salatalık (100g)",kalori:16,protein:0.7,karb:3.6,yag:0.1},
+    {ad:"Biber (1 adet)",kalori:31,protein:1,karb:7.6,yag:0.3},
+    {ad:"Patlıcan (100g)",kalori:25,protein:1,karb:6,yag:0.2},
+  ],
+  "🍎 Meyveler":[
+    {ad:"Elma (1 adet)",kalori:52,protein:0.3,karb:14,yag:0.2},
+    {ad:"Muz (1 adet)",kalori:89,protein:1.1,karb:23,yag:0.3},
+    {ad:"Portakal (1 adet)",kalori:62,protein:1.2,karb:15,yag:0.2},
+    {ad:"Çilek (100g)",kalori:32,protein:0.7,karb:7.7,yag:0.3},
+    {ad:"Avokado (½ adet)",kalori:120,protein:1.5,karb:6,yag:11},
+    {ad:"Karpuz (100g)",kalori:30,protein:0.6,karb:7.6,yag:0.2},
+  ],
+  "🥛 Süt Ürünleri":[
+    {ad:"Süt Tam Yağlı (1 bardak)",kalori:149,protein:8,karb:12,yag:8},
+    {ad:"Yoğurt (100g)",kalori:61,protein:3.5,karb:4.7,yag:3.3},
+    {ad:"Greek Yoğurt (100g)",kalori:59,protein:10,karb:3.6,yag:0.4},
+    {ad:"Beyaz Peynir (30g)",kalori:75,protein:5,karb:0.5,yag:6},
+    {ad:"Kefir (1 bardak)",kalori:104,protein:9,karb:12,yag:2},
+    {ad:"Cottage Cheese (100g)",kalori:98,protein:11,karb:3.4,yag:4.3},
+  ],
+  "🥜 Baklagil & Kuruyemiş":[
+    {ad:"Mercimek (100g pişmiş)",kalori:116,protein:9,karb:20,yag:0.4},
+    {ad:"Nohut (100g pişmiş)",kalori:164,protein:9,karb:27,yag:2.6},
+    {ad:"Ceviz (30g)",kalori:196,protein:4.6,karb:4.1,yag:19.6},
+    {ad:"Badem (30g)",kalori:173,protein:6.3,karb:6,yag:15},
+    {ad:"Fıstık Ezmesi (1 yemek k.)",kalori:94,protein:4,karb:3.1,yag:8},
+  ],
+  "🫒 Yağlar & Diğer":[
+    {ad:"Zeytinyağı (1 yemek k.)",kalori:119,protein:0,karb:0,yag:13.5},
+    {ad:"Bal (1 tatlı k.)",kalori:21,protein:0,karb:5.7,yag:0},
+    {ad:"Zeytin (10 adet)",kalori:41,protein:0.3,karb:2.3,yag:3.8},
+    {ad:"Bitter Çikolata (30g)",kalori:170,protein:2.2,karb:13,yag:12},
+    {ad:"Protein Bar",kalori:200,protein:20,karb:22,yag:7},
+  ],
+};
+const TUM_YIYECEKLER=Object.values(YIYECEKLER).flat();
+
+const EGZERSIZLER=[
+  {ad:"Koşu",ikon:"🏃",kd:10},
+  {ad:"Yüzme",ikon:"🏊",kd:8},
+  {ad:"Bisiklet",ikon:"🚴",kd:7},
+  {ad:"Ağırlık",ikon:"🏋️",kd:6},
+  {ad:"Yoga",ikon:"🧘",kd:3},
+  {ad:"HIIT",ikon:"⚡",kd:12},
+  {ad:"Yürüyüş",ikon:"🚶",kd:4},
+  {ad:"Pilates",ikon:"🤸",kd:5},
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let state={
+  tab:0,
+  profil: JSON.parse(localStorage.getItem("s_profil")||'{"ad":"","yas":"","cinsiyet":"erkek"}'),
+  ogunler:[],
+  antrenmanlar:[],
+  uyku:[],
+  suMl:0,
+  suHedef:2500,
+  adim:0,
+  adimHedef:10000,
+  adimAktif:false,
+  adimIzin:"bekliyor",
+  manuelAdim:"",
+  hedefYag:"",
+  hedefTarih:"",
+  // streak
+  streakGunler: JSON.parse(localStorage.getItem("s_streak")||"[]"),
+  // fotoğraf
+  fotograflar: JSON.parse(localStorage.getItem("s_foto")||"[]"),
+  // antrenman & beslenme programi
+  antProg: JSON.parse(localStorage.getItem("s_antprog")||JSON.stringify({
+    Pazartesi:{tip:"antrenman",baslik:"",hareketler:[]},
+    Salı:{tip:"dinlenme",baslik:"",hareketler:[]},
+    Çarşamba:{tip:"antrenman",baslik:"",hareketler:[]},
+    Perşembe:{tip:"dinlenme",baslik:"",hareketler:[]},
+    Cuma:{tip:"antrenman",baslik:"",hareketler:[]},
+    Cumartesi:{tip:"antrenman",baslik:"",hareketler:[]},
+    Pazar:{tip:"dinlenme",baslik:"",hareketler:[]},
+  })),
+  besProg: JSON.parse(localStorage.getItem("s_besprog")||JSON.stringify({
+    Pazartesi:[],Salı:[],Çarşamba:[],Perşembe:[],Cuma:[],Cumartesi:[],Pazar:[]
+  })),
+  progSecGun: ["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"][new Date().getDay()===0?6:new Date().getDay()-1],
+  progAcik:"ant", // "ant" | "bes"
+  progYeniHareket:"",
+  progYeniSet:"",
+  progYeniRep:"",
+  progYeniAcik:false,
+  besProgYeniOgun:"",
+  besProgYeniIcerik:"",
+  besProgYeniKcal:"",
+  // 1RM
+  rm_agirlik:"",
+  rm_tekrar:"",
+  rm_gecmis: JSON.parse(localStorage.getItem("s_rm")||"[]"),
+  rm_hareket:"Bench Press",
+  // rapor
+  raporHazir:false,
+  raporAltSekme:"foto", // "foto" | "ozet"
+  // beslenme ui
+  katAktif:Object.keys(YIYECEKLER)[0],
+  secYiyecek:TUM_YIYECEKLER[0].ad,
+  arama:"",
+  ozelBesinler: JSON.parse(localStorage.getItem("s_ozel")||'[]'),
+  ozelForm:{ac:false,ad:"",kalori:"",protein:"",karb:"",yag:""},
+  // antrenman ui
+  secEg:"Koşu",
+  egSure:30,
+  // uyku ui
+  uykuBas:"",
+  uykuBit:"",
+  // olcum
+  olcumGecmisi: JSON.parse(localStorage.getItem("s_olcum")||"[]"),
+  olcumForm:{ac:false,tarih:new Date().toISOString().split("T")[0],kilo:"",boy:"",bel:"",boyun:"",kalca:"",gogus:"",omuz:"",biceps:"",uyluk:"",kalf:""},
+  olcumAktif:{kilo:true,bel:true,boyun:false,kalca:false,gogus:true,omuz:true,biceps:true,uyluk:true,kalf:true},
+};
+
+// ── HESAPLA ───────────────────────────────────────────────────────────────────
+function hesaplaBMI(k,b){
+  k=parseFloat(k);b=parseFloat(b);
+  if(!k||!b)return null;
+  return (k/((b/100)**2)).toFixed(1);
+}
+function hesaplaYag({cinsiyet,boy,bel,boyun,kalca}){
+  const b=parseFloat(boy),bl=parseFloat(bel),bn=parseFloat(boyun),k=parseFloat(kalca);
+  if(!b||!bl||!bn)return null;
+  if(cinsiyet==="erkek")return(495/(1.0324-0.19077*Math.log10(bl-bn)+0.15456*Math.log10(b))-450).toFixed(1);
+  if(!k)return null;
+  return(495/(1.29579-0.35004*Math.log10(bl+k-bn)+0.22100*Math.log10(b))-450).toFixed(1);
+}
+function hesaplaBMR({yas,cinsiyet,kilo,boy}){
+  const y=parseFloat(yas),k=parseFloat(kilo),b=parseFloat(boy);
+  if(!y||!k||!b)return null;
+  return cinsiyet==="erkek"?88.362+13.397*k+4.799*b-5.677*y:447.593+9.247*k+3.098*b-4.330*y;
+}
+
+function getSonOlcum(){
+  if(state.olcumGecmisi.length===0)return{};
+  // En son tarihteki kayıt
+  const sorted=[...state.olcumGecmisi].sort((a,b)=>b.tarih.localeCompare(a.tarih));
+  return sorted[0];
+}
+
+function getDerived(){
+  const p=state.profil;
+  const o=getSonOlcum();
+  // Boy/kilo/bel/boyun/kalca son ölçümden al
+  const profilBirlestir={...p, boy:o.boy||p.boy||"", kilo:o.kilo||p.kilo||"", bel:o.bel||p.bel||"", boyun:o.boyun||p.boyun||"", kalca:o.kalca||p.kalca||""};
+  const bmi=hesaplaBMI(profilBirlestir.kilo,profilBirlestir.boy);
+  const yag=hesaplaYag({...profilBirlestir,cinsiyet:p.cinsiyet});
+  const bmr=hesaplaBMR({...profilBirlestir,cinsiyet:p.cinsiyet,yas:p.yas});
+  const tdee=bmr?Math.round(bmr*1.55):null;
+  const topKal=state.ogunler.reduce((s,o)=>s+o.kalori,0);
+  const topPro=state.ogunler.reduce((s,o)=>s+o.protein,0);
+  const topKarb=state.ogunler.reduce((s,o)=>s+o.karb,0);
+  const topYag=state.ogunler.reduce((s,o)=>s+o.yag,0);
+  const topYak=state.antrenmanlar.reduce((s,a)=>s+a.yakilanKalori,0);
+  const topUyu=state.uyku.reduce((s,u)=>s+u.sure,0);
+  const k=parseFloat(p.kilo)||0;
+  const yo=parseFloat(yag)||0;
+  const hYag=parseFloat(state.hedefYag)||(p.cinsiyet==="erkek"?15:22);
+  const yakılacak=Math.max(0,(k*yo/100)-(k*hYag/100));
+  let gunKalani=0,gerekliAcik=0,hafHiz=0;
+  if(state.hedefTarih){
+    const bd=new Date();bd.setHours(0,0,0,0);
+    const hd=new Date(state.hedefTarih);hd.setHours(0,0,0,0);
+    gunKalani=Math.max(0,Math.round((hd-bd)/86400000));
+    if(gunKalani>0&&yakılacak>0){
+      gerekliAcik=Math.round((yakılacak*7700)/gunKalani);
+      hafHiz=parseFloat((yakılacak/(gunKalani/7)).toFixed(2));
+    }
+  }
+  const hedefKcal=tdee?Math.max(tdee-(gerekliAcik||Math.round(tdee*0.15)),p.cinsiyet==="erkek"?1500:1200):1800;
+  const adimMesafe=((state.adim*0.78)/1000).toFixed(2);
+  const adimKcal=Math.round(state.adim*0.04*(k/70||1));
+  return{bmi,yag,bmr,tdee,topKal,topPro,topKarb,topYag,topYak,topUyu,k,yo,hYag,yakılacak,gunKalani,gerekliAcik,hafHiz,hedefKcal,adimMesafe,adimKcal};
+}
+
+// ── SVG YARDIMCILARI ──────────────────────────────────────────────────────────
+function svgRing(val,max,label,color,size=88){
+  const r=size*0.4,cx=size/2,cy=size/2;
+  const circ=2*Math.PI*r;
+  const pct=Math.min(val/max,1);
+  return`<div class="ring-wrap">
+    <svg width="${size}" height="${size}">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#1a1a1a" stroke-width="7"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="7"
+        stroke-dasharray="${pct*circ} ${circ}" stroke-linecap="round"
+        transform="rotate(-90 ${cx} ${cy})"/>
+      <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="#fff" font-size="${size*.16}" font-weight="700" font-family="DM Sans,sans-serif">${val}</text>
+      <text x="${cx}" y="${cy+size*.14}" text-anchor="middle" fill="#555" font-size="${size*.1}" font-family="DM Sans,sans-serif">${label}</text>
+    </svg>
+  </div>`;
+}
+
+function svgBMI(bmi){
+  const val=Math.min(Math.max(parseFloat(bmi),10),40);
+  const pct=((val-10)/30)*100;
+  let renk="#4ade80",lbl="Normal";
+  if(val<18.5){renk="#60a5fa";lbl="Zayıf";}
+  else if(val>=30){renk="#f87171";lbl="Obez";}
+  else if(val>=25){renk="#facc15";lbl="Fazla Kilolu";}
+  return`<div style="margin-bottom:14px">
+    <div style="display:flex;justify-content:space-between;margin-bottom:7px">
+      <span style="color:#888;font-size:13px">BMI</span>
+      <span style="color:${renk};font-weight:700;font-size:17px">${bmi} — ${lbl}</span>
+    </div>
+    <div style="background:#1a1a1a;border-radius:99px;height:10px;overflow:hidden">
+      <div style="width:${pct}%;background:linear-gradient(90deg,#60a5fa,${renk});height:100%;border-radius:99px"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px">
+      ${["10","18.5","25","30","40"].map(v=>`<span style="font-size:9px;color:#444">${v}</span>`).join("")}
+    </div>
+  </div>`;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  const d=getDerived();
+  renderHeader(d);
+  renderContent(d);
+  renderTabBar();
+  attachEvents(d);
+}
+
+function renderHeader(d){
+  const p=state.profil;
+  document.getElementById("hdr-isim").textContent=p.ad?`Merhaba, ${p.ad}! 👋`:"Hoş Geldin! 👋";
+  document.getElementById("hdr-tarih").textContent=new Date().toLocaleDateString("tr-TR",{weekday:"long",day:"numeric",month:"long"});
+  const hdrKal=document.getElementById("hdr-kalori");
+  const hdrKcal=document.getElementById("hdr-kcal");
+  if(d.tdee){hdrKal.style.display="block";hdrKcal.textContent=d.hedefKcal;}
+  else hdrKal.style.display="none";
+
+  const chips=[
+    {label:"Alınan",val:d.topKal,max:d.tdee||2000,unit:"kcal"},
+    {label:"Yakılan",val:d.topYak,max:600,unit:"kcal"},
+    {label:"Su",val:parseFloat((state.suMl/1000).toFixed(1)),max:parseFloat((state.suHedef/1000).toFixed(1)),unit:"L"},
+    {label:"Adım",val:state.adim,max:state.adimHedef,unit:"adım"},
+    {label:"Uyku",val:d.topUyu,max:8,unit:"sa"},
+  ];
+  // Bugünkü program hatırlatması
+  const bugunAnt=state.antProg[BUGUN_GUN]||{};
+  const bugunBes=state.besProg[BUGUN_GUN]||[];
+  let hatirlatmaEl=document.getElementById("hdr-hatirlatma");
+  if(!hatirlatmaEl){
+    hatirlatmaEl=document.createElement("div");
+    hatirlatmaEl.id="hdr-hatirlatma";
+    document.getElementById("header").insertBefore(hatirlatmaEl,document.getElementById("mini-chips"));
+  }
+  if(bugunAnt.baslik||bugunAnt.tip==="antrenman"||bugunBes.length>0){
+    hatirlatmaEl.innerHTML=`
+    <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      ${bugunAnt.baslik||bugunAnt.tip==="antrenman"?`
+      <div style="background:${bugunAnt.tip==="antrenman"?"#0f2a0f":"#1a1a1a"};border:1px solid ${bugunAnt.tip==="antrenman"?"#4ade8066":"#333"};border-radius:8px;padding:6px 10px;font-size:11px;color:${bugunAnt.tip==="antrenman"?"#4ade80":"#666"}">
+        ${bugunAnt.tip==="antrenman"?"💪":"😴"} ${bugunAnt.baslik||"Antrenman günü"}
+      </div>`:""}
+      ${bugunBes.length>0?`
+      <div style="background:#0a1a0a;border:1px solid #34d39944;border-radius:8px;padding:6px 10px;font-size:11px;color:#34d399">
+        🍽️ ${bugunBes.length} öğün planlandı
+      </div>`:""}
+    </div>`;
+  } else {
+    hatirlatmaEl.innerHTML="";
+  }
+
+  document.getElementById("mini-chips").innerHTML=chips.map(c=>`
+    <div class="chip">
+      <div style="font-size:9px;color:#555;text-transform:uppercase;letter-spacing:.8px">${c.label}</div>
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-top:1px">${c.val} <span style="font-size:9px;color:#666">${c.unit}</span></div>
+      <div style="background:#1a1a1a;border-radius:99px;height:2px;margin-top:4px">
+        <div style="width:${Math.min(c.val/c.max*100,100)}%;background:#fff;height:100%;border-radius:99px"></div>
+      </div>
+    </div>`).join("");
+}
+
+function renderTabBar(){
+  document.getElementById("tabbar").style.overflowX="hidden";
+  document.getElementById("tabbar").innerHTML=TABS.map(t=>`
+    <button class="tab-btn${state.tab===t.id?" active":""}" data-tab="${t.id}">
+      <span class="tab-icon">${t.ikon}</span>
+      <span class="tab-label">${t.label}</span>
+    </button>`).join("");
+}
+
+function renderContent(d){
+  const el=document.getElementById("content");
+  el.className="scroll fi";
+  void el.offsetWidth; // reflow for animation
+  if(state.tab===0)el.innerHTML=renderProfil(d);
+  else if(state.tab===1)el.innerHTML=renderBeslenme(d);
+  else if(state.tab===2)el.innerHTML=renderAntrenman(d);
+  else if(state.tab===3)el.innerHTML=renderTakip(d);
+  else if(state.tab===4)el.innerHTML=renderYagYakim(d);
+  else if(state.tab===5)el.innerHTML=renderHaftalikOzet(d);
+  else if(state.tab===7)el.innerHTML=renderProgram(d);
+  else if(state.tab===8)el.innerHTML=renderRapor(d);
+}
+
+// ── TAB 0: PROFİL ─────────────────────────────────────────────────────────────
+function renderProfil(d){
+  const p=state.profil;
+  return`
+    <div class="card">
+      <div class="card-title">👤 Kişisel Bilgiler</div>
+      <div class="grid2">
+        <div>
+          <label class="lbl">Ad Soyad</label>
+          <input class="inp" type="text" inputmode="text" value="${p.ad||""}" placeholder="Adın" data-pkey="ad"/>
+        </div>
+        <div>
+          <label class="lbl">Yaş</label>
+          <input class="inp" type="number" inputmode="decimal" value="${p.yas||""}" placeholder="25" data-pkey="yas"/>
+        </div>
+        <div>
+          <label class="lbl">Cinsiyet</label>
+          <select class="inp" data-pkey="cinsiyet">
+            <option value="erkek"${p.cinsiyet==="erkek"?" selected":""}>Erkek</option>
+            <option value="kadin"${p.cinsiyet==="kadin"?" selected":""}>Kadın</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-top:10px;background:#000;border:1px solid #1a1a1a;border-radius:10px;padding:10px 12px;font-size:12px;color:#555">
+        💡 Boy, kilo, bel ve diğer ölçüler için aşağıdaki <b style="color:#888">Vücut Ölçüleri</b> bölümünü kullan.
+      </div>
+    </div>
+
+    ${d.bmi?`
+    <div class="card">
+      <div class="card-title">📊 Analiz</div>
+      ${svgBMI(d.bmi)}
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="infobox"><div class="val">${d.bmi}</div><div class="lbl2">BMI</div></div>
+        ${d.yag?`<div class="infobox"><div class="val">%${d.yag}</div><div class="lbl2">Yağ Oranı</div></div>`:""}
+        ${d.tdee?`<div class="infobox"><div class="val">${d.tdee}</div><div class="lbl2">TDEE kcal</div></div>`:""}
+        ${d.bmr?`<div class="infobox"><div class="val">${Math.round(d.bmr)}</div><div class="lbl2">BMR kcal</div></div>`:""}
+      </div>
+      ${d.tdee?`
+      <div style="border-radius:10px;overflow:hidden;border:1px solid #222">
+        ${[
+          {l:"BMR",v:`${Math.round(d.bmr)} kcal`,a:"Bazal metabolizma hızın",c:"#a78bfa"},
+          {l:"TDEE",v:`${d.tdee} kcal`,a:"Günlük enerji ihtiyacın",c:"#4ade80"},
+          {l:"Yağ Yakım Hedefi",v:`${Math.round(d.tdee*0.85)} kcal`,a:"%15 kalori açığı",c:"#facc15"},
+          {l:"Min. Güvenli",v:`${p.cinsiyet==="erkek"?1500:1200} kcal`,a:"Bu değerin altına düşme!",c:"#f87171"},
+        ].map((r,i,arr)=>`
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 13px;${i<arr.length-1?"border-bottom:1px solid #1a1a1a":""}">
+            <div>
+              <div style="font-size:12px;font-weight:600">${r.l}</div>
+              <div style="font-size:11px;color:#555;margin-top:2px">${r.a}</div>
+            </div>
+            <div style="font-size:14px;font-weight:700;color:${r.c};white-space:nowrap;margin-left:10px">${r.v}</div>
+          </div>`).join("")}
+      </div>`:""}
+    </div>`:""}
+    <!-- ÖLÇÜM GEÇMİŞİ KARTLARI -->
+    ${renderOlcumFormu()}
+    ${renderOlcumGrafik()}
+    <div style="height:8px"></div>`;
+}
+
+// ── ÖLÇÜM FORMU ──────────────────────────────────────────────────────────────
+const OLCUMLER=[
+  {key:"kilo",lbl:"Kilo",unit:"kg",renk:"#fff"},
+  {key:"bel",lbl:"Bel",unit:"cm",renk:"#a78bfa"},
+  {key:"boyun",lbl:"Boyun",unit:"cm",renk:"#818cf8"},
+  {key:"kalca",lbl:"Kalça",unit:"cm",renk:"#c084fc"},
+  {key:"gogus",lbl:"Göğüs",unit:"cm",renk:"#60a5fa"},
+  {key:"omuz",lbl:"Omuz",unit:"cm",renk:"#34d399"},
+  {key:"biceps",lbl:"Biceps",unit:"cm",renk:"#facc15"},
+  {key:"uyluk",lbl:"Uyluk",unit:"cm",renk:"#f472b6"},
+  {key:"kalf",lbl:"Kalf",unit:"cm",renk:"#fb923c"},
+];
+
+function renderOlcumFormu(){
+  const f=state.olcumForm;
+  return`
+  <div class="card">
+    <div class="card-title">📏 Vücut Ölçüleri Ekle</div>
+    <button class="btn${f.ac?" btn-outline":""}" id="btn-olcum-toggle" style="margin-bottom:${f.ac?12:0}px">
+      ${f.ac?"▲ Kapat":"➕ Yeni Ölçüm Gir"}
+    </button>
+    ${f.ac?`
+    <div>
+      <div style="margin-bottom:10px">
+        <label class="lbl">📅 Tarih</label>
+        <input class="inp" type="date" id="olcum-tarih" value="${f.tarih}" style="margin-top:4px"/>
+      </div>
+      <div class="grid2">
+        ${OLCUMLER.map(o=>`
+        <div>
+          <label class="lbl" style="color:${o.renk}">${o.lbl} (${o.unit})</label>
+          <input class="inp" type="number" inputmode="decimal" id="olcum-${o.key}" value="${f[o.key]}" placeholder="0" style="border-color:${f[o.key]?""+o.renk+"44":"#333"}"/>
+        </div>`).join("")}
+      </div>
+      <button class="btn" id="btn-olcum-kaydet" style="margin-top:12px">💾 Ölçümü Kaydet</button>
+    </div>`:""}
+  </div>`;
+}
+
+function renderOlcumGrafik(){
+  const g=state.olcumGecmisi;
+  if(g.length<1)return`
+  <div class="card">
+    <div class="card-title">📈 İlerleme Grafiği</div>
+    <div style="text-align:center;padding:20px 0;color:#555;font-size:13px">Henüz ölçüm yok.<br>Yukarıdan ilk ölçümünü ekle!</div>
+  </div>`;
+
+  // Aktif serimler
+  const aktif=OLCUMLER.filter(o=>state.olcumAktif[o.key]);
+  // Tarihler sıralı
+  const tarihler=[...new Set(g.map(r=>r.tarih))].sort();
+
+  // SVG grafik boyutları
+  const W=Math.min(window.innerWidth-56,420);
+  const H=200;
+  const PAD={top:16,right:12,bot:32,left:36};
+  const gW=W-PAD.left-PAD.right;
+  const gH=H-PAD.top-PAD.bot;
+
+  // Tüm görünen değerler
+  let allVals=[];
+  aktif.forEach(o=>{
+    tarihler.forEach(t=>{
+      const r=g.find(x=>x.tarih===t);
+      if(r&&r[o.key])allVals.push(parseFloat(r[o.key]));
+    });
+  });
+  if(allVals.length===0)return`
+  <div class="card">
+    <div class="card-title">📈 İlerleme Grafiği</div>
+    <div style="text-align:center;padding:20px 0;color:#555;font-size:13px">Seçili ölçümler için veri yok.</div>
+  </div>`;
+
+  const minV=Math.min(...allVals)*0.97;
+  const maxV=Math.max(...allVals)*1.03;
+  const xStep=tarihler.length>1?gW/(tarihler.length-1):gW/2;
+
+  function xPos(i){return PAD.left+(tarihler.length>1?i*xStep:gW/2);}
+  function yPos(v){return PAD.top+gH-(((v-minV)/(maxV-minV))*gH);}
+
+  // Çizgiler
+  let lines="";
+  let dots="";
+  aktif.forEach(o=>{
+    const points=tarihler.map((t,i)=>{
+      const r=g.find(x=>x.tarih===t);
+      if(!r||!r[o.key])return null;
+      return{x:xPos(i),y:yPos(parseFloat(r[o.key])),v:r[o.key]};
+    }).filter(Boolean);
+    if(points.length<1)return;
+    if(points.length>=2){
+      const d=points.map((p,i)=>`${i===0?"M":"L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+      lines+=`<path d="${d}" fill="none" stroke="${o.renk}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>`;
+    }
+    points.forEach(p=>{
+      dots+=`<circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="4" fill="${o.renk}" stroke="#111" stroke-width="2"/>`;
+    });
+  });
+
+  // X ekseni etiketleri
+  const xLabels=tarihler.map((t,i)=>{
+    const d=new Date(t);
+    const lbl=`${d.getDate()}/${d.getMonth()+1}`;
+    return`<text x="${xPos(i).toFixed(1)}" y="${H-6}" text-anchor="middle" fill="#555" font-size="9" font-family="DM Sans,sans-serif">${lbl}</text>`;
+  }).join("");
+
+  // Y ekseni etiketleri (3 adet)
+  const yLabels=[0,0.5,1].map(f=>{
+    const v=(minV+f*(maxV-minV)).toFixed(1);
+    const y=(PAD.top+gH-f*gH).toFixed(1);
+    return`<text x="${PAD.left-4}" y="${y}" text-anchor="end" fill="#555" font-size="9" font-family="DM Sans,sans-serif" dominant-baseline="middle">${v}</text>
+    <line x1="${PAD.left}" y1="${y}" x2="${PAD.left+gW}" y2="${y}" stroke="#1a1a1a" stroke-width="1"/>`;
+  }).join("");
+
+  // Son ölçüm özeti
+  const sonOlcum=g.filter(x=>x.tarih===tarihler[tarihler.length-1])[0]||{};
+
+  return`
+  <div class="card">
+    <div class="card-title">📈 İlerleme Grafiği <span style="font-size:10px;color:#555;font-weight:400">(${tarihler.length} kayıt)</span></div>
+
+    <!-- Seri toggle butonları -->
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px">
+      ${OLCUMLER.map(o=>{
+        const ac=state.olcumAktif[o.key];
+        return`<button data-toggle-olcum="${o.key}" style="padding:5px 10px;border-radius:20px;border:1px solid ${ac?o.renk:"#333"};background:${ac?o.renk+"22":"#000"};color:${ac?o.renk:"#555"};cursor:pointer;font-size:11px;font-weight:${ac?700:400}">${o.lbl}</button>`;
+      }).join("")}
+    </div>
+
+    <!-- SVG Grafik -->
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch">
+      <svg width="${W}" height="${H}" style="display:block">
+        ${yLabels}
+        <line x1="${PAD.left}" y1="${PAD.top}" x2="${PAD.left}" y2="${PAD.top+gH}" stroke="#333" stroke-width="1"/>
+        <line x1="${PAD.left}" y1="${PAD.top+gH}" x2="${PAD.left+gW}" y2="${PAD.top+gH}" stroke="#333" stroke-width="1"/>
+        ${lines}
+        ${dots}
+        ${xLabels}
+      </svg>
+    </div>
+
+    <!-- Son ölçüm değerleri -->
+    <div style="margin-top:12px;border-top:1px solid #1a1a1a;padding-top:12px">
+      <div style="font-size:11px;color:#555;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px">Son Ölçüm: ${tarihler[tarihler.length-1]||"—"}</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        ${OLCUMLER.filter(o=>sonOlcum[o.key]).map(o=>`
+        <div style="background:#000;border:1px solid ${o.renk}44;border-radius:8px;padding:6px 10px;text-align:center">
+          <div style="font-size:13px;font-weight:700;color:${o.renk}">${sonOlcum[o.key]}<span style="font-size:9px;color:#555">${o.unit}</span></div>
+          <div style="font-size:9px;color:#555;margin-top:1px">${o.lbl}</div>
+        </div>`).join("")}
+      </div>
+    </div>
+
+    <!-- Kayıt listesi -->
+    ${g.length>0?`
+    <div style="margin-top:12px;border-top:1px solid #1a1a1a;padding-top:10px">
+      <div style="font-size:11px;color:#555;margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px">Tüm Kayıtlar</div>
+      ${[...g].sort((a,b)=>b.tarih.localeCompare(a.tarih)).map(r=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #111">
+        <div>
+          <div style="font-size:12px;font-weight:600">${r.tarih}</div>
+          <div style="font-size:11px;color:#555;margin-top:2px">${OLCUMLER.filter(o=>r[o.key]).map(o=>`${o.lbl}: ${r[o.key]}${o.unit}`).join(" · ")}</div>
+        </div>
+        <button data-del-olcum="${r.id}" style="background:none;border:none;color:#f44;cursor:pointer;font-size:20px;padding:0 4px;line-height:1">×</button>
+      </div>`).join("")}
+    </div>`:""}
+  </div>`;
+}
+
+// ── TAB 1: BESLENME ───────────────────────────────────────────────────────────
+function renderBeslenme(d){
+  const katlar=[...Object.keys(YIYECEKLER),"⭐ Özel"];
+  const arama=state.arama;
+  const tumOzel=[...TUM_YIYECEKLER,...state.ozelBesinler];
+  const liste=arama.length>1
+    ?tumOzel.filter(y=>y.ad.toLowerCase().includes(arama.toLowerCase()))
+    :state.katAktif==="⭐ Özel"?state.ozelBesinler:(YIYECEKLER[state.katAktif]||[]);
+  const gosterilen=liste.find(y=>y.ad===state.secYiyecek)||liste[0];
+  const o=state.ozelForm;
+
+  return`
+    <div class="card">
+      <div class="card-title">🍽️ Öğün Ekle</div>
+      <input class="inp" type="text" id="bes-arama" placeholder="🔍 Yiyecek ara..." value="${arama}" style="margin-bottom:10px"/>
+      ${arama.length<=1?`
+      <div style="display:flex;gap:6px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px">
+        ${katlar.map(k=>`<button class="kat-btn${state.katAktif===k?" active":""}" data-kat="${k}">${k}</button>`).join("")}
+      </div>`:""}
+      ${liste.length>0?`
+        <select class="inp" id="bes-select" size="${Math.min(liste.length,5)}" style="margin-bottom:10px">
+          ${liste.map(y=>`<option value="${y.ad}"${y.ad===state.secYiyecek?" selected":""}>${y.ad} — ${y.kalori} kcal</option>`).join("")}
+        </select>
+        ${gosterilen?`
+        <div class="grid2" style="grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
+          ${[["Kal",gosterilen.kalori,"kcal"],["Pro",Math.round(gosterilen.protein),"g"],["Karb",Math.round(gosterilen.karb),"g"],["Yağ",Math.round(gosterilen.yag),"g"]].map(([l,v,u])=>`
+          <div style="background:#000;border-radius:8px;padding:8px;text-align:center">
+            <div style="font-size:13px;font-weight:700">${v}<span style="font-size:10px;color:#555">${u}</span></div>
+            <div style="font-size:10px;color:#555">${l}</div>
+          </div>`).join("")}
+        </div>
+        <button class="btn" id="btn-yiyecek-ekle">+ Öğüne Ekle</button>`:""}
+      `:`<div style="text-align:center;padding:14px 0;color:#facc15;font-size:13px">Henüz özel besin yok</div>`}
+    </div>
+
+    <div class="card">
+      <div class="card-title">✏️ Özel Besin Ekle</div>
+      <button class="btn${o.ac?" btn-outline":""}" id="btn-ozel-toggle">${o.ac?"▲ Kapat":"➕ Yeni Besin Tanımla"}</button>
+      ${o.ac?`
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+        <div><label class="lbl">Besin Adı *</label><input class="inp" id="oz-ad" type="text" value="${o.ad}" placeholder="örn: Ev Köftesi"/></div>
+        <div class="grid2">
+          <div><label class="lbl" style="color:#aaa">Kalori *</label><input class="inp" id="oz-kal" type="number" inputmode="decimal" value="${o.kalori}" placeholder="0"/></div>
+          <div><label class="lbl" style="color:#aaa">Protein (g)</label><input class="inp" id="oz-pro" type="number" inputmode="decimal" value="${o.protein}" placeholder="0"/></div>
+          <div><label class="lbl" style="color:#aaa">Karb (g)</label><input class="inp" id="oz-karb" type="number" inputmode="decimal" value="${o.karb}" placeholder="0"/></div>
+          <div><label class="lbl" style="color:#aaa">Yağ (g)</label><input class="inp" id="oz-yag" type="number" inputmode="decimal" value="${o.yag}" placeholder="0"/></div>
+        </div>
+        <button class="btn" id="btn-ozel-kaydet">💾 Kaydet</button>
+      </div>`:""}
+    </div>
+
+    <div class="card">
+      <div class="card-title">📈 Günlük Makrolar</div>
+      <div style="display:flex;justify-content:space-around;padding:6px 0">
+        ${svgRing(d.topKal,d.tdee||2000,"kcal","#fff")}
+        ${svgRing(Math.round(d.topPro),150,"g","#aaa")}
+        ${svgRing(Math.round(d.topKarb),250,"g","#888")}
+        ${svgRing(Math.round(d.topYag),70,"g","#666")}
+      </div>
+      <div style="display:flex;justify-content:space-around;margin-top:4px">
+        ${["Kalori","Protein","Karb","Yağ"].map(l=>`<span style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.7px">${l}</span>`).join("")}
+      </div>
+    </div>
+
+    ${state.ogunler.length>0?`
+    <div class="card">
+      <div class="card-title">🧾 Bugünkü Öğünler</div>
+      ${state.ogunler.map(o=>`
+      <div class="row-item">
+        <div>
+          <div style="font-size:13px;font-weight:500">${o.ozel?"⭐ ":""}${o.ad}</div>
+          <div style="font-size:11px;color:#555">P:${o.protein}g · K:${o.karb}g · Y:${o.yag}g</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:700;font-size:13px">${o.kalori} kcal</span>
+          <button class="del-btn" data-del-ogun="${o.id}">×</button>
+        </div>
+      </div>`).join("")}
+      <div style="margin-top:10px;background:#000;border-radius:10px;padding:10px 13px;display:flex;justify-content:space-between">
+        <span style="color:#888;font-size:13px">Toplam</span>
+        <span style="font-weight:700">${d.topKal} kcal</span>
+      </div>
+    </div>`:""}
+    <div style="height:8px"></div>`;
+}
+
+// ── TAB 2: ANTRENMAN ─────────────────────────────────────────────────────────
+function renderAntrenman(d){
+  return`
+    <div class="card">
+      <div class="card-title">💪 Antrenman Ekle</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px">
+        ${EGZERSIZLER.map(e=>`
+        <button class="eg-btn${state.secEg===e.ad?" active":""}" data-eg="${e.ad}">
+          <span style="font-size:22px">${e.ikon}</span>${e.ad}
+        </button>`).join("")}
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-end">
+        <div style="flex:1">
+          <label class="lbl">Süre (dakika)</label>
+          <input class="inp" id="eg-sure" type="number" inputmode="decimal" value="${state.egSure}" style="margin-top:4px"/>
+        </div>
+        <button class="btn" id="btn-eg-ekle" style="width:auto;padding:12px 20px">+ Ekle</button>
+      </div>
+    </div>
+
+    ${state.antrenmanlar.length>0?`
+    <div class="card">
+      <div class="card-title">🔥 Antrenmanlar</div>
+      ${state.antrenmanlar.map(a=>`
+      <div class="row-item">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:24px">${a.ikon}</span>
+          <div>
+            <div style="font-size:13px;font-weight:500">${a.ad}</div>
+            <div style="font-size:11px;color:#555">${a.sure} dakika</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-weight:700;font-size:13px">−${a.yakilanKalori} kcal</span>
+          <button class="del-btn" data-del-ant="${a.id}">×</button>
+        </div>
+      </div>`).join("")}
+      <div style="margin-top:10px;background:#000;border-radius:10px;padding:10px 13px;display:flex;justify-content:space-between">
+        <span style="color:#888;font-size:13px">Toplam Yakılan</span>
+        <span style="font-weight:700">${d.topYak} kcal</span>
+      </div>
+    </div>`:""}
+    ${render1RM()}
+    <div style="height:8px"></div>`;
+}
+
+// ── TAB 3: TAKİP ─────────────────────────────────────────────────────────────
+function renderTakip(d){
+  const adimPct=Math.min((state.adim/state.adimHedef)*100,100);
+  const r=54,cx=65,cy=65;
+  const circ=2*Math.PI*r;
+  const adimRenk=adimPct>=100?"#4ade80":adimPct>=60?"#facc15":"#fff";
+
+  // Su
+  const suPct=Math.min(state.suMl/state.suHedef,1);
+  const suRenk=suPct>=1?"#4ade80":suPct>0.6?"#60a5fa":suPct>0.3?"#facc15":"#f87171";
+  const fillH=Math.round(110*suPct);
+
+  return`
+    <!-- ADIM -->
+    <div class="card">
+      <div class="card-title">👟 Adım Sayacı</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <svg width="130" height="130" style="flex-shrink:0">
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#1a1a1a" stroke-width="9"/>
+          <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${adimRenk}" stroke-width="9"
+            stroke-dasharray="${(adimPct/100)*circ} ${circ}" stroke-linecap="round"
+            transform="rotate(-90 ${cx} ${cy})"/>
+          <text x="${cx}" y="${cy-8}" text-anchor="middle" fill="#fff" font-size="19" font-weight="700" font-family="DM Sans,sans-serif">${state.adim.toLocaleString("tr-TR")}</text>
+          <text x="${cx}" y="${cy+10}" text-anchor="middle" fill="#555" font-size="11" font-family="DM Sans,sans-serif">adım</text>
+          <text x="${cx}" y="${cy+26}" text-anchor="middle" fill="${adimRenk}" font-size="12" font-weight="600" font-family="DM Sans,sans-serif">${Math.round(adimPct)}%</text>
+        </svg>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+          <div style="background:#000;border-radius:10px;padding:10px 12px">
+            <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.8px">Mesafe</div>
+            <div style="font-size:17px;font-weight:700">${d.adimMesafe} <span style="font-size:11px;color:#555">km</span></div>
+          </div>
+          <div style="background:#000;border-radius:10px;padding:10px 12px">
+            <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.8px">Yakılan</div>
+            <div style="font-size:17px;font-weight:700">${d.adimKcal} <span style="font-size:11px;color:#555">kcal</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+          <label class="lbl">Günlük Hedef</label>
+          <span style="font-size:13px;font-weight:700;color:${adimRenk}">${state.adimHedef.toLocaleString("tr-TR")}</span>
+        </div>
+        <input type="range" min="2000" max="20000" step="500" value="${state.adimHedef}" id="adim-hedef-range" style="accent-color:${adimRenk}"/>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        ${!state.adimAktif?`
+        <button class="btn" id="btn-sensor" style="flex:1">
+          ${state.adimIzin==="reddedildi"?"🚫 İzin Reddedildi":state.adimIzin==="desteklenmiyor"?"📵 Desteklenmiyor":"📱 Sensörü Başlat"}
+        </button>`:`
+        <button class="btn pu" id="btn-sensor-dur" style="flex:1;background:#1a1a1a;color:#f87171;border:1px solid #f87171">⏹ Durdur</button>`}
+        <button id="btn-adim-sifirla" style="background:#000;border:1px solid #333;border-radius:12px;padding:12px 14px;color:#888;cursor:pointer;font-size:13px">Sıfırla</button>
+      </div>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">
+        ${[500,1000,2000,5000].map(n=>`
+        <button class="btn btn-outline" data-add-adim="${n}" style="flex:1;padding:9px 4px;font-size:12px">+${n>=1000?n/1000+"K":n}</button>`).join("")}
+      </div>
+      <div style="display:flex;gap:8px">
+        <input class="inp" id="manuel-adim" type="number" inputmode="decimal" placeholder="Özel miktar" value="${state.manuelAdim}" style="flex:1"/>
+        <button id="btn-manuel-ekle" style="background:#1a1a1a;border:1px solid #fff;border-radius:10px;padding:10px 14px;color:#fff;cursor:pointer;font-size:13px;font-weight:700">Ekle</button>
+      </div>
+
+      ${state.adimAktif?`<div style="margin-top:10px;background:#052e16;border:1px solid #4ade80;border-radius:8px;padding:8px 12px;font-size:12px;color:#4ade80;text-align:center">🟢 Sensör aktif — cihazını taşı!</div>`:""}
+      <div style="margin-top:10px;text-align:center;font-size:13px;color:${adimPct>=100?"#4ade80":adimPct>=50?"#facc15":"#555"}">
+        ${adimPct>=100?"🎉 Hedefe ulaştın!":adimPct>=50?`💪 ${(state.adimHedef-state.adim).toLocaleString("tr-TR")} adım kaldı!`:`👟 Hadi başla! Hedef: ${state.adimHedef.toLocaleString("tr-TR")}`}
+      </div>
+    </div>
+
+    <!-- SU -->
+    <div class="card">
+      <div class="card-title">💧 Su Takibi</div>
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:12px">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:6px;flex-shrink:0">
+          <svg width="66" height="138">
+            <rect x="13" y="2" width="8" height="9" rx="2" fill="#222"/>
+            <rect x="10" y="12" width="46" height="110" rx="10" fill="#111" stroke="#333" stroke-width="2"/>
+            <clipPath id="bc"><rect x="10" y="12" width="46" height="110" rx="10"/></clipPath>
+            <rect x="10" y="${122-fillH}" width="46" height="${fillH}" fill="${suRenk}" opacity=".85" clip-path="url(#bc)"/>
+            <text x="33" y="72" text-anchor="middle" fill="#fff" font-size="11" font-weight="700" font-family="DM Sans,sans-serif">${Math.round(suPct*100)}%</text>
+          </svg>
+          <div style="text-align:center">
+            <div style="font-size:16px;font-weight:700;color:${suRenk}">${state.suMl>=1000?(state.suMl/1000).toFixed(1)+"L":state.suMl+"ml"}</div>
+            <div style="font-size:10px;color:#444">/ ${(state.suHedef/1000).toFixed(1)}L</div>
+          </div>
+        </div>
+        <div style="flex:1">
+          <div style="margin-bottom:10px">
+            <label class="lbl">Günlük Hedef (ml)</label>
+            <input class="inp" id="su-hedef" type="number" inputmode="decimal" value="${state.suHedef}" style="margin-top:4px"/>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+            ${[{l:"Yudum",ml:50,i:"💧"},{l:"Küçük",ml:150,i:"🥛"},{l:"1 Bardak",ml:250,i:"🫗"},{l:"Büyük",ml:350,i:"🧃"},{l:"500ml",ml:500,i:"🍶"},{l:"1L",ml:1000,i:"🫙"}].map(s=>`
+            <button data-su="${s.ml}" style="padding:8px 4px;border-radius:8px;border:1px solid #333;background:#000;color:#fff;cursor:pointer;font-size:11px;text-align:center">
+              ${s.i} ${s.l}<br><span style="color:#555;font-size:10px">+${s.ml}ml</span>
+            </button>`).join("")}
+          </div>
+        </div>
+      </div>
+      <div style="background:#000;border-radius:10px;padding:10px 13px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:12px;color:${state.suMl>=state.suHedef?"#4ade80":"#60a5fa"};font-weight:600">
+          ${state.suMl===0?"Su içmeye başla! 💪":state.suMl>=state.suHedef?"✅ Hedefe ulaştın!":`⏳ ${state.suHedef-state.suMl}ml kaldı`}
+        </span>
+        ${state.suMl>0?`<button id="btn-su-sifirla" style="background:none;border:none;color:#555;cursor:pointer;font-size:12px">Sıfırla</button>`:""}
+      </div>
+    </div>
+
+    <!-- UYKU -->
+    <div class="card">
+      <div class="card-title">😴 Uyku Kaydı</div>
+      <div class="grid2">
+        <div>
+          <label class="lbl">Yatış Saati</label>
+          <input class="inp" id="uyku-bas" type="time" value="${state.uykuBas}" style="margin-top:4px"/>
+        </div>
+        <div>
+          <label class="lbl">Uyanış Saati</label>
+          <input class="inp" id="uyku-bit" type="time" value="${state.uykuBit}" style="margin-top:4px"/>
+        </div>
+      </div>
+      <button class="btn" id="btn-uyku-ekle" style="margin-top:12px">+ Uyku Ekle</button>
+      <div style="display:flex;justify-content:center;padding:12px 0">
+        ${svgRing(d.topUyu,8,"saat","#fff",100)}
+      </div>
+      <div style="text-align:center;margin-bottom:10px;font-size:13px;color:${d.topUyu>=7?"#4ade80":d.topUyu>0?"#facc15":"#555"}">
+        ${d.topUyu>=7?"✅ Yeterli uyku!":d.topUyu>0?`⚠️ ${(8-d.topUyu).toFixed(1)} saat daha önerilir`:"Uyku kaydı ekle"}
+      </div>
+      ${state.uyku.map(u=>`
+      <div class="row-item">
+        <div>
+          <div style="font-size:13px">🛏️ ${u.baslangic} → ${u.bitis}</div>
+          <div style="font-size:11px;color:#555">${u.sure} saat</div>
+        </div>
+        <button class="del-btn" data-del-uyku="${u.id}">×</button>
+      </div>`).join("")}
+    </div>
+    <div style="height:8px"></div>`;
+}
+
+// ── TAB 4: YAĞ YAKIMI ────────────────────────────────────────────────────────
+function renderYagYakim(d){
+  const p=state.profil;
+  if(!d.k||!d.yo)return`
+    <div class="card" style="text-align:center;padding:30px 16px">
+      <div style="font-size:36px;margin-bottom:12px">⚠️</div>
+      <div style="color:#facc15;font-weight:700;font-size:15px;margin-bottom:6px">Profil bilgilerin eksik!</div>
+      <div style="color:#666;font-size:13px">Profil sekmesini doldurun (boy, kilo, bel, boyun).</div>
+    </div>`;
+
+  const minYag=p.cinsiyet==="erkek"?5:13;
+  const maxYag=Math.max(d.yo-1,minYag+1);
+  const acikRenk=d.gerekliAcik>800?"#f87171":d.gerekliAcik>500?"#facc15":"#4ade80";
+
+  return`
+    <div class="card">
+      <div class="card-title">🎯 Hedef Belirle</div>
+      <div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <label class="lbl">Hedef Yağ Oranı</label>
+          <span style="font-size:20px;font-weight:700">%${d.hYag}</span>
+        </div>
+        <input type="range" min="${minYag}" max="${maxYag}" value="${d.hYag}" id="hedef-yag-range" style="accent-color:#fff"/>
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#555;margin-top:2px">
+          <span>Min %${minYag}</span>
+          <span>Mevcut: %${d.yo}</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <div style="background:#1a1a1a;border-radius:99px;height:16px;position:relative">
+          <div style="width:${Math.min(d.hYag/maxYag*100,100)}%;background:#333;height:100%;border-radius:99px;position:relative">
+            <div style="position:absolute;right:-10px;top:-3px;width:22px;height:22px;background:#fff;border-radius:99%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#000">%${d.yo}</div>
+          </div>
+          <div style="position:absolute;left:calc(${Math.min(d.hYag/maxYag*100,100)}% - 6px);top:-2px;width:12px;height:20px;background:#4ade80;border-radius:99px;box-shadow:0 0 8px #4ade8088"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:8px">
+          <span style="color:#4ade80">🟢 Hedef: %${d.hYag}</span>
+          <span style="color:#fff">📍 Şu an: %${d.yo}</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:14px">
+        <label class="lbl">📅 Hedef Tarihi</label>
+        <input class="inp" type="date" id="hedef-tarih" value="${state.hedefTarih}" min="${new Date(Date.now()+86400000).toISOString().split("T")[0]}" style="margin-top:5px"/>
+      </div>
+
+      <div class="grid2">
+        <div class="infobox"><div class="val">${d.yakılacak.toFixed(1)} kg</div><div class="lbl2">Yakılacak Yağ</div></div>
+        <div class="infobox"><div class="val">${d.gunKalani>0?d.gunKalani+" gün":"—"}</div><div class="lbl2">Kalan Süre</div></div>
+      </div>
+    </div>
+
+    ${state.hedefTarih&&d.gunKalani>0?`
+    <div class="card" style="border-color:${acikRenk}44">
+      <div class="card-title">⚡ Kalori Planın</div>
+      <div class="grid2" style="margin-bottom:12px">
+        <div class="infobox"><div class="val">${d.tdee||"—"}</div><div class="lbl2">TDEE kcal</div></div>
+        <div class="infobox"><div class="val" style="color:${acikRenk}">−${d.gerekliAcik}</div><div class="lbl2">Kalori Açığı</div></div>
+      </div>
+      <div style="background:${acikRenk}18;border:1px solid ${acikRenk}44;border-radius:12px;padding:14px;margin-bottom:12px">
+        <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Günlük Yeme Hedefin</div>
+        <div style="font-size:28px;font-weight:700;color:${acikRenk}">${d.hedefKcal} <span style="font-size:13px;color:#555">kcal/gün</span></div>
+        <div style="font-size:12px;color:#888;margin-top:4px">Haftalık yakım: ~${d.hafHiz} kg/hafta</div>
+      </div>
+      <div style="background:#000;border-radius:10px;padding:10px 13px;font-size:13px;color:${acikRenk};font-weight:600;text-align:center;margin-bottom:12px">
+        ${d.gerekliAcik>(d.tdee||2000)*0.4?"⚠️ Çok agresif! Süreyi uzat.":d.gerekliAcik>800?"🔶 Yüksek açık — dikkatli ol.":"✅ Güvenli ve sürdürülebilir!"}
+      </div>
+      ${[{m:"Protein",g:Math.round(d.hedefKcal*0.4/4),o:40},{m:"Karbonhidrat",g:Math.round(d.hedefKcal*0.35/4),o:35},{m:"Yağ",g:Math.round(d.hedefKcal*0.25/9),o:25}].map(m=>`
+      <div style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span style="font-size:12px;font-weight:600">${m.m}</span>
+          <span style="font-size:12px">${m.g}g <span style="color:#555">(${m.o}%)</span></span>
+        </div>
+        <div style="background:#1a1a1a;border-radius:99px;height:5px">
+          <div style="width:${m.o}%;background:#fff;height:100%;border-radius:99px"></div>
+        </div>
+      </div>`).join("")}
+    </div>`:""}
+
+    <div class="card">
+      <div class="card-title">📊 Bugünkü Denge</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px">
+        <div class="infobox"><div class="val">${d.topKal}</div><div class="lbl2">Alınan</div></div>
+        <div class="infobox"><div class="val">${d.topYak}</div><div class="lbl2">Yakılan</div></div>
+        <div class="infobox"><div class="val" style="color:${(d.topKal-d.topYak)<=d.hedefKcal?"#4ade80":"#f87171"}">${d.topKal-d.topYak}</div><div class="lbl2">Net kcal</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">💡 Taktikler</div>
+      ${[["🏋️","Ağırlık çalış","Kas kütlesi dinlenirken daha fazla yağ yakar."],["🏃","Aç karnına yürü","Sabah 30-45 dk yürüyüş yağ yakımını optimize eder."],["🥩","Protein ağırlıklı ye","Tokluk sağlar, kas kaybını önler."],["💧","3L su iç","Metabolizmayı geçici olarak hızlandırır."],["😴","8 saat uyu","Kortizol düşer, yağ depolanması azalır."],["⏰","16:8 oruç dene","İnsülin duyarlılığını iyileştirir."]].map(([i,b,a])=>`
+      <div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #1a1a1a">
+        <span style="font-size:22px;flex-shrink:0">${i}</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:2px">${b}</div>
+          <div style="font-size:12px;color:#555">${a}</div>
+        </div>
+      </div>`).join("")}
+    </div>
+    <div style="height:8px"></div>`;
+}
+
+// ── EVENTS ────────────────────────────────────────────────────────────────────
+let motionHandler=null;
+const stepBuf=[];
+let lastAcc={x:0,y:0,z:0};
+
+function detectStep(a){
+  const mag=Math.sqrt(a.x*a.x+a.y*a.y+a.z*a.z);
+  stepBuf.push(mag);
+  if(stepBuf.length>10)stepBuf.shift();
+  const avg=stepBuf.reduce((s,v)=>s+v,0)/stepBuf.length;
+  const lastMag=Math.sqrt(lastAcc.x**2+lastAcc.y**2+lastAcc.z**2);
+  lastAcc=a;
+  if(mag>avg+2.5&&lastMag<=avg+2.5){
+    state.adim++;
+    render();
+  }
+}
+
+async function sensoreBasla(){
+  if(!window.DeviceMotionEvent){state.adimIzin="desteklenmiyor";render();return;}
+  if(typeof DeviceMotionEvent.requestPermission==="function"){
+    try{
+      const p=await DeviceMotionEvent.requestPermission();
+      if(p!=="granted"){state.adimIzin="reddedildi";render();return;}
+    }catch{state.adimIzin="reddedildi";render();return;}
+  }
+  state.adimIzin="verildi";state.adimAktif=true;
+  motionHandler=(e)=>{const a=e.accelerationIncludingGravity;if(a)detectStep({x:a.x||0,y:a.y||0,z:a.z||0});};
+  window.addEventListener("devicemotion",motionHandler);
+  render();
+}
+function sensoriDurdur(){
+  if(motionHandler)window.removeEventListener("devicemotion",motionHandler);
+  state.adimAktif=false;render();
+}
+
+function attachEvents(){
+  // Tab bar
+  document.querySelectorAll("[data-tab]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.tab=parseInt(btn.dataset.tab);render();});
+  });
+
+  // Profil inputlar
+  document.querySelectorAll("[data-pkey]").forEach(el=>{
+    el.addEventListener("input",()=>{
+      state.profil[el.dataset.pkey]=el.value;
+      localStorage.setItem("s_profil",JSON.stringify(state.profil));
+      // sadece header güncelle (full render flicker olmadan)
+      renderHeader(getDerived());
+    });
+    el.addEventListener("change",()=>{render();});
+  });
+
+  // Beslenme arama
+  const besArama=document.getElementById("bes-arama");
+  if(besArama)besArama.addEventListener("input",e=>{state.arama=e.target.value;render();});
+
+  // Kategori butonları
+  document.querySelectorAll("[data-kat]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.katAktif=btn.dataset.kat;state.arama="";render();});
+  });
+
+  // Yiyecek seç
+  const besSel=document.getElementById("bes-select");
+  if(besSel)besSel.addEventListener("change",e=>{state.secYiyecek=e.target.value;render();});
+
+  // Yiyecek ekle
+  const btnYekle=document.getElementById("btn-yiyecek-ekle");
+  if(btnYekle)btnYekle.addEventListener("click",()=>{
+    const liste=state.arama.length>1
+      ?[...TUM_YIYECEKLER,...state.ozelBesinler].filter(y=>y.ad.toLowerCase().includes(state.arama.toLowerCase()))
+      :state.katAktif==="⭐ Özel"?state.ozelBesinler:(YIYECEKLER[state.katAktif]||[]);
+    const g=liste.find(y=>y.ad===state.secYiyecek)||liste[0];
+    if(g)state.ogunler.push({...g,id:Date.now()});
+    render();
+  });
+
+  // Öğün sil
+  document.querySelectorAll("[data-del-ogun]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.ogunler=state.ogunler.filter(o=>o.id!=btn.dataset.delOgun);render();});
+  });
+
+  // Özel besin toggle
+  const btnOzelT=document.getElementById("btn-ozel-toggle");
+  if(btnOzelT)btnOzelT.addEventListener("click",()=>{state.ozelForm.ac=!state.ozelForm.ac;render();});
+
+  // Özel besin kaydet
+  const btnOzelK=document.getElementById("btn-ozel-kaydet");
+  if(btnOzelK)btnOzelK.addEventListener("click",()=>{
+    const ad=document.getElementById("oz-ad")?.value.trim();
+    const kal=document.getElementById("oz-kal")?.value;
+    if(!ad||!kal||isNaN(kal))return;
+    const yeni={ad,kalori:parseFloat(kal),protein:parseFloat(document.getElementById("oz-pro")?.value)||0,karb:parseFloat(document.getElementById("oz-karb")?.value)||0,yag:parseFloat(document.getElementById("oz-yag")?.value)||0,ozel:true};
+    state.ozelBesinler.push(yeni);
+    localStorage.setItem("s_ozel",JSON.stringify(state.ozelBesinler));
+    state.ozelForm={ac:false,ad:"",kalori:"",protein:"",karb:"",yag:""};
+    state.katAktif="⭐ Özel";state.secYiyecek=yeni.ad;
+    render();
+  });
+
+  // Egzersiz seç
+  document.querySelectorAll("[data-eg]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.secEg=btn.dataset.eg;render();});
+  });
+
+  // Egzersiz ekle
+  const btnEgEkle=document.getElementById("btn-eg-ekle");
+  if(btnEgEkle)btnEgEkle.addEventListener("click",()=>{
+    const sure=parseInt(document.getElementById("eg-sure")?.value)||30;
+    const eg=EGZERSIZLER.find(e=>e.ad===state.secEg);
+    if(eg)state.antrenmanlar.push({ad:eg.ad,ikon:eg.ikon,sure,yakilanKalori:Math.round(eg.kd*sure),id:Date.now()});
+    render();
+  });
+  const egSureInp=document.getElementById("eg-sure");
+  if(egSureInp)egSureInp.addEventListener("change",e=>{state.egSure=parseInt(e.target.value)||30;});
+
+  // Antrenman sil
+  document.querySelectorAll("[data-del-ant]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.antrenmanlar=state.antrenmanlar.filter(a=>a.id!=btn.dataset.delAnt);render();});
+  });
+
+  // Adım hedef range
+  const adimRange=document.getElementById("adim-hedef-range");
+  if(adimRange)adimRange.addEventListener("input",e=>{state.adimHedef=parseInt(e.target.value);render();});
+
+  // Sensör
+  document.getElementById("btn-sensor")?.addEventListener("click",sensoreBasla);
+  document.getElementById("btn-sensor-dur")?.addEventListener("click",sensoriDurdur);
+  document.getElementById("btn-adim-sifirla")?.addEventListener("click",()=>{state.adim=0;render();});
+
+  // Hızlı adım ekle
+  document.querySelectorAll("[data-add-adim]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.adim+=parseInt(btn.dataset.addAdim);render();});
+  });
+
+  // Manuel adım
+  const manuelInp=document.getElementById("manuel-adim");
+  if(manuelInp)manuelInp.addEventListener("input",e=>{state.manuelAdim=e.target.value;});
+  document.getElementById("btn-manuel-ekle")?.addEventListener("click",()=>{
+    const n=parseInt(document.getElementById("manuel-adim")?.value)||0;
+    if(n>0){state.adim+=n;state.manuelAdim="";render();}
+  });
+
+  // Su butonları
+  document.querySelectorAll("[data-su]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.suMl=Math.min(state.suMl+parseInt(btn.dataset.su),state.suHedef*2);render();});
+  });
+  document.getElementById("su-hedef")?.addEventListener("change",e=>{state.suHedef=parseInt(e.target.value)||2500;render();});
+  document.getElementById("btn-su-sifirla")?.addEventListener("click",()=>{state.suMl=0;render();});
+
+  // Uyku
+  document.getElementById("uyku-bas")?.addEventListener("change",e=>{state.uykuBas=e.target.value;});
+  document.getElementById("uyku-bit")?.addEventListener("change",e=>{state.uykuBit=e.target.value;});
+  document.getElementById("btn-uyku-ekle")?.addEventListener("click",()=>{
+    if(!state.uykuBas||!state.uykuBit)return;
+    const bas=new Date("2000-01-01T"+state.uykuBas);
+    let bit=new Date("2000-01-01T"+state.uykuBit);
+    if(bit<=bas)bit=new Date("2000-01-02T"+state.uykuBit);
+    const sure=parseFloat(((bit-bas)/3600000).toFixed(1));
+    state.uyku.push({baslangic:state.uykuBas,bitis:state.uykuBit,sure,id:Date.now()});
+    state.uykuBas="";state.uykuBit="";render();
+  });
+  document.querySelectorAll("[data-del-uyku]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.uyku=state.uyku.filter(u=>u.id!=btn.dataset.delUyku);render();});
+  });
+
+  // Yağ yakımı
+  document.getElementById("hedef-yag-range")?.addEventListener("input",e=>{state.hedefYag=e.target.value;render();});
+  document.getElementById("hedef-tarih")?.addEventListener("change",e=>{state.hedefTarih=e.target.value;render();});
+
+  // ── FOTOĞRAF EVENTS ──
+  const fotoInput=document.getElementById("foto-input");
+  const fotoOnizleme=document.getElementById("foto-onizleme");
+  const fotoOnizlemeImg=document.getElementById("foto-onizleme-img");
+  let fotoVeriTemp=null;
+
+  fotoInput?.addEventListener("change",e=>{
+    const file=e.target.files[0];
+    if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      fotoVeriTemp=ev.target.result;
+      fotoOnizlemeImg.src=fotoVeriTemp;
+      fotoOnizleme.style.display="block";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById("btn-foto-kaydet")?.addEventListener("click",()=>{
+    if(!fotoVeriTemp)return;
+    const tarih=document.getElementById("foto-tarih")?.value||new Date().toISOString().split("T")[0];
+    state.fotograflar.push({id:Date.now(),tarih,veri:fotoVeriTemp});
+    state.fotograflar.sort((a,b)=>a.tarih.localeCompare(b.tarih));
+    // Fotoğraflar büyük olduğundan sıkıştır - max 20 fotoğraf
+    if(state.fotograflar.length>20)state.fotograflar=state.fotograflar.slice(-20);
+    try{localStorage.setItem("s_foto",JSON.stringify(state.fotograflar));}catch(e){console.warn("Foto storage full");}
+    fotoVeriTemp=null;
+    render();
+  });
+
+  document.querySelectorAll("[data-del-foto]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      state.fotograflar=state.fotograflar.filter(f=>f.id!=btn.dataset.delFoto);
+      try{localStorage.setItem("s_foto",JSON.stringify(state.fotograflar));}catch(e){}
+      render();
+    });
+  });
+
+  // Foto karşılaştır seçim
+  document.getElementById("foto-once")?.addEventListener("change",()=>updateFotoKarsilastir());
+  document.getElementById("foto-sonra")?.addEventListener("change",()=>updateFotoKarsilastir());
+
+
+  // ── PROGRAM EVENTS ──
+  document.querySelectorAll("[data-prog-gun]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.progSecGun=btn.dataset.progGun;state.progYeniAcik=false;render();});
+  });
+
+  document.getElementById("btn-prog-ant")?.addEventListener("click",()=>{state.progAcik="ant";render();});
+  document.getElementById("btn-prog-bes")?.addEventListener("click",()=>{state.progAcik="bes";render();});
+
+  // Antrenman tip (antrenman/dinlenme)
+  document.querySelectorAll("[data-ant-tip]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const gun=state.progSecGun;
+      if(!state.antProg[gun])state.antProg[gun]={tip:"dinlenme",baslik:"",hareketler:[]};
+      state.antProg[gun].tip=btn.dataset.antTip;
+      localStorage.setItem("s_antprog",JSON.stringify(state.antProg));
+      render();
+    });
+  });
+
+  // Antrenman başlık kaydet
+  document.getElementById("btn-ant-kaydet")?.addEventListener("click",()=>{
+    const gun=state.progSecGun;
+    if(!state.antProg[gun])state.antProg[gun]={tip:"dinlenme",baslik:"",hareketler:[]};
+    state.antProg[gun].baslik=document.getElementById("ant-baslik")?.value||"";
+    localStorage.setItem("s_antprog",JSON.stringify(state.antProg));
+    render();
+  });
+
+  // Hareket toggle
+  document.getElementById("btn-hareket-toggle")?.addEventListener("click",()=>{
+    state.progYeniAcik=!state.progYeniAcik;render();
+  });
+
+  // Hareket ekle
+  document.getElementById("btn-hareket-ekle")?.addEventListener("click",()=>{
+    const ad=document.getElementById("prog-hareket-ad")?.value.trim();
+    if(!ad)return;
+    const set=document.getElementById("prog-set")?.value||"";
+    const rep=document.getElementById("prog-rep")?.value||"";
+    const gun=state.progSecGun;
+    if(!state.antProg[gun])state.antProg[gun]={tip:"antrenman",baslik:"",hareketler:[]};
+    state.antProg[gun].hareketler.push({id:Date.now(),ad,set,rep});
+    localStorage.setItem("s_antprog",JSON.stringify(state.antProg));
+    state.progYeniHareket="";state.progYeniSet="";state.progYeniRep="";state.progYeniAcik=false;
+    render();
+  });
+
+  // input state güncelle (hareket formu)
+  document.getElementById("prog-hareket-ad")?.addEventListener("input",e=>{state.progYeniHareket=e.target.value;});
+  document.getElementById("prog-set")?.addEventListener("input",e=>{state.progYeniSet=e.target.value;});
+  document.getElementById("prog-rep")?.addEventListener("input",e=>{state.progYeniRep=e.target.value;});
+
+  // Hareket sil
+  document.querySelectorAll("[data-del-hareket]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const gun=state.progSecGun;
+      const i=parseInt(btn.dataset.delHareket);
+      state.antProg[gun].hareketler.splice(i,1);
+      localStorage.setItem("s_antprog",JSON.stringify(state.antProg));
+      render();
+    });
+  });
+
+  // Beslenme prog ekle
+  document.getElementById("bes-prog-ogun")?.addEventListener("input",e=>{state.besProgYeniOgun=e.target.value;});
+  document.getElementById("bes-prog-icerik")?.addEventListener("input",e=>{state.besProgYeniIcerik=e.target.value;});
+  document.getElementById("bes-prog-kcal")?.addEventListener("input",e=>{state.besProgYeniKcal=e.target.value;});
+
+  document.getElementById("btn-bes-prog-ekle")?.addEventListener("click",()=>{
+    const ogun=document.getElementById("bes-prog-ogun")?.value.trim();
+    const icerik=document.getElementById("bes-prog-icerik")?.value.trim();
+    if(!ogun)return;
+    const kcal=document.getElementById("bes-prog-kcal")?.value||"";
+    const gun=state.progSecGun;
+    if(!state.besProg[gun])state.besProg[gun]=[];
+    state.besProg[gun].push({id:Date.now(),ogun,icerik,kcal});
+    localStorage.setItem("s_besprog",JSON.stringify(state.besProg));
+    state.besProgYeniOgun="";state.besProgYeniIcerik="";state.besProgYeniKcal="";
+    render();
+  });
+
+  // Beslenme prog sil
+  document.querySelectorAll("[data-del-bes-prog]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const gun=state.progSecGun;
+      state.besProg[gun]=(state.besProg[gun]||[]).filter(o=>o.id!=btn.dataset.delBesProg);
+      localStorage.setItem("s_besprog",JSON.stringify(state.besProg));
+      render();
+    });
+  });
+
+  // ── 1RM EVENTS ──
+  document.querySelectorAll("[data-rm-hareket]").forEach(btn=>{
+    btn.addEventListener("click",()=>{state.rm_hareket=btn.dataset.rmHareket;render();});
+  });
+  document.getElementById("rm-agirlik")?.addEventListener("input",e=>{state.rm_agirlik=e.target.value;render();});
+  document.getElementById("rm-tekrar")?.addEventListener("input",e=>{state.rm_tekrar=e.target.value;render();});
+  document.getElementById("btn-rm-kaydet")?.addEventListener("click",()=>{
+    const rm=hesapla1RM(state.rm_agirlik,state.rm_tekrar);
+    if(!rm)return;
+    state.rm_gecmis.push({id:Date.now(),hareket:state.rm_hareket,deger:rm,tarih:new Date().toLocaleDateString("tr-TR")});
+    localStorage.setItem("s_rm",JSON.stringify(state.rm_gecmis));
+    render();
+  });
+  document.querySelectorAll("[data-del-rm]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      state.rm_gecmis=state.rm_gecmis.filter(r=>r.id!=btn.dataset.delRm);
+      localStorage.setItem("s_rm",JSON.stringify(state.rm_gecmis));
+      render();
+    });
+  });
+
+  // ── RAPOR EVENTS ──
+  document.getElementById("btn-rapor-sekme-foto")?.addEventListener("click",()=>{state.raporAltSekme="foto";render();});
+  document.getElementById("btn-rapor-sekme-ozet")?.addEventListener("click",()=>{state.raporAltSekme="ozet";render();});
+
+  document.getElementById("btn-rapor-indir")?.addEventListener("click",()=>{
+    alert("📸 Rapor kartının ekran görüntüsünü almak için:\n\niPhone: Güç + Ses Açma butonuna aynı anda bas\nAndroid: Güç + Ses Kısma butonuna aynı anda bas");
+  });
+  document.getElementById("btn-rapor-kopyala")?.addEventListener("click",()=>{
+    const streak=hesaplaStreak();
+    const d=getDerived();
+    const metin=
+"💪 HAFTALIK SAĞLIK RAPORUM\n"+
+"━━━━━━━━━━━━━━━━━━━━\n"+
+"📅 "+new Date().toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"})+"\n\n"+
+"🔥 Seri: "+streak+" gün\n"+
+"🍽️ Kalori: "+d.topKal+"/"+d.hedefKcal+" kcal\n"+
+"💧 Su: "+(state.suMl>=1000?(state.suMl/1000).toFixed(1)+"L":state.suMl+"ml")+"\n"+
+"👟 Adım: "+state.adim.toLocaleString("tr-TR")+"\n"+
+"😴 Uyku: "+d.topUyu+" saat\n"+
+"🏆 PR Sayısı: "+state.rm_gecmis.length+"\n\n"+
+"#SağlıkTakibi #Fitness";
+    navigator.clipboard.writeText(metin).then(()=>{
+      const el=document.getElementById("kopyala-bilgi");
+      if(el){el.style.display="block";setTimeout(()=>el.style.display="none",2500);}
+    }).catch(()=>alert(metin));
+  });
+
+  // Ölçüm formu toggle
+  document.getElementById("btn-olcum-toggle")?.addEventListener("click",()=>{
+    state.olcumForm.ac=!state.olcumForm.ac;render();
+  });
+
+  // Ölçüm tarih
+  document.getElementById("olcum-tarih")?.addEventListener("change",e=>{state.olcumForm.tarih=e.target.value;});
+
+  // Ölçüm kaydet
+  document.getElementById("btn-olcum-kaydet")?.addEventListener("click",()=>{
+    const f=state.olcumForm;
+    const tarih=document.getElementById("olcum-tarih")?.value||f.tarih;
+    const kayit={id:Date.now(),tarih};
+    let dolu=false;
+    ["kilo","boy","bel","boyun","kalca","gogus","omuz","biceps","uyluk","kalf"].forEach(k=>{
+      const v=document.getElementById("olcum-"+k)?.value;
+      if(v){kayit[k]=parseFloat(v);dolu=true;}
+    });
+    if(!dolu)return;
+    // Aynı tarihte kayıt varsa güncelle
+    const mevcut=state.olcumGecmisi.findIndex(r=>r.tarih===tarih);
+    if(mevcut>=0){
+      state.olcumGecmisi[mevcut]={...state.olcumGecmisi[mevcut],...kayit,id:state.olcumGecmisi[mevcut].id};
+    } else {
+      state.olcumGecmisi.push(kayit);
+    }
+    state.olcumGecmisi.sort((a,b)=>a.tarih.localeCompare(b.tarih));
+    localStorage.setItem("s_olcum",JSON.stringify(state.olcumGecmisi));
+    state.olcumForm={ac:false,tarih:new Date().toISOString().split("T")[0],kilo:"",bel:"",gogus:"",omuz:"",biceps:"",uyluk:"",kalf:""};
+    render();
+  });
+
+  // Seri toggle
+  document.querySelectorAll("[data-toggle-olcum]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const k=btn.dataset.toggleOlcum;
+      state.olcumAktif[k]=!state.olcumAktif[k];
+      render();
+    });
+  });
+
+  // Ölçüm sil
+  document.querySelectorAll("[data-del-olcum]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      state.olcumGecmisi=state.olcumGecmisi.filter(r=>r.id!=btn.dataset.delOlcum);
+      localStorage.setItem("s_olcum",JSON.stringify(state.olcumGecmisi));
+      render();
+    });
+  });
+
+  // Streak
+  hesaplaStreak();
+}
+
+
+// ── STREAK HESAPLA ────────────────────────────────────────────────────────────
+function hesaplaStreak(){
+  const bugun=new Date().toISOString().split("T")[0];
+  if(!state.streakGunler.includes(bugun)){
+    state.streakGunler.push(bugun);
+    localStorage.setItem("s_streak",JSON.stringify(state.streakGunler));
+  }
+  const sorted=[...new Set(state.streakGunler)].sort();
+  let streak=0;
+  const now=new Date(); now.setHours(0,0,0,0);
+  for(let i=sorted.length-1;i>=0;i--){
+    const d=new Date(sorted[i]); d.setHours(0,0,0,0);
+    const diff=Math.round((now-d)/86400000);
+    if(diff===streak){streak++;} else break;
+  }
+  return streak;
+}
+
+function getRozetler(streak,topYak,topKal,adimToplam){
+  const rozetler=[];
+  if(streak>=1)rozetler.push({ikon:"🔥",ad:"İlk Adım",ac:"Uygulamayı ilk kez açtın"});
+  if(streak>=3)rozetler.push({ikon:"⚡",ad:"3 Gün Seri",ac:"3 gün üst üste giriş"});
+  if(streak>=7)rozetler.push({ikon:"🏆",ad:"1 Hafta",ac:"7 gün kesintisiz"});
+  if(streak>=30)rozetler.push({ikon:"👑",ad:"1 Ay",ac:"30 gün kesintisiz!"});
+  if(topYak>=300)rozetler.push({ikon:"🔥",ad:"Kalori Yakıcı",ac:"300+ kcal yaktın"});
+  if(adimToplam>=10000)rozetler.push({ikon:"👟",ad:"10K Adım",ac:"Günlük 10.000 adım!"});
+  if(state.olcumGecmisi.length>=3)rozetler.push({ikon:"📏",ad:"Düzenli Takip",ac:"3+ ölçüm kaydı"});
+  if(state.fotograflar.length>=1)rozetler.push({ikon:"📸",ad:"İlerlemeyi Belgele",ac:"İlk fotoğraf"});
+  if(state.ogunler.length>=3)rozetler.push({ikon:"🥗",ad:"Bilinçli Beslen",ac:"3+ öğün takibi"});
+  return rozetler;
+}
+
+// ── TAB 5: HAFTALIK ÖZET ─────────────────────────────────────────────────────
+function renderHaftalikOzet(d){
+  const streak=hesaplaStreak();
+  const rozetler=getRozetler(streak,d.topYak,d.topKal,state.adim);
+
+  // Haftalık streak takvimi
+  const gunler=["Pzt","Sal","Çar","Per","Cum","Cmt","Paz"];
+  const bugun=new Date();
+  const haftaGunleri=Array.from({length:7},(_,i)=>{
+    const d=new Date(bugun);
+    const day=bugun.getDay()===0?6:bugun.getDay()-1;
+    d.setDate(bugun.getDate()-day+i);
+    return d.toISOString().split("T")[0];
+  });
+
+  return`
+  <div class="card">
+    <div class="card-title">🔥 Seri & Takvim</div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:16px">
+      <div style="text-align:center">
+        <div style="font-size:48px;font-weight:700;line-height:1">${streak}</div>
+        <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px">günlük seri</div>
+      </div>
+      <div style="flex:1">
+        <div style="font-size:13px;color:#888;margin-bottom:6px">Bu hafta:</div>
+        <div style="display:flex;gap:4px">
+          ${haftaGunleri.map((g,i)=>{
+            const aktif=state.streakGunler.includes(g);
+            const bugunMu=g===new Date().toISOString().split("T")[0];
+            return`<div style="flex:1;text-align:center">
+              <div style="font-size:9px;color:#555;margin-bottom:4px">${gunler[i]}</div>
+              <div style="width:100%;aspect-ratio:1;border-radius:6px;background:${aktif?"#fff":bugunMu?"#333":"#111"};border:${bugunMu?"1px solid #555":"1px solid #1a1a1a"};display:flex;align-items:center;justify-content:center;font-size:10px">${aktif?"✓":""}</div>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <div class="infobox"><div class="val">${state.streakGunler.length}</div><div class="lbl2">Toplam Gün</div></div>
+      <div class="infobox"><div class="val">${rozetler.length}</div><div class="lbl2">Rozet</div></div>
+      <div class="infobox"><div class="val">${streak>=7?"🏆":streak>=3?"⚡":"🔥"}</div><div class="lbl2">Seviye</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🏅 Rozetlerim</div>
+    ${rozetler.length===0?`<div style="text-align:center;padding:16px 0;color:#555;font-size:13px">Henüz rozet yok. Kullanmaya devam et!</div>`:""}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      ${rozetler.map(r=>`
+      <div style="background:#000;border:1px solid #333;border-radius:10px;padding:12px;display:flex;gap:10px;align-items:center">
+        <span style="font-size:28px">${r.ikon}</span>
+        <div>
+          <div style="font-size:12px;font-weight:700">${r.ad}</div>
+          <div style="font-size:10px;color:#555;margin-top:2px">${r.ac}</div>
+        </div>
+      </div>`).join("")}
+    </div>
+    ${rozetler.length<9?`
+    <div style="margin-top:12px;border-top:1px solid #1a1a1a;padding-top:12px">
+      <div style="font-size:11px;color:#555;margin-bottom:8px">Sonraki rozetler:</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        ${[
+          {ikon:"⚡",ad:"3 Gün Seri",kos:streak<3,mesaj:`${3-streak} gün daha`},
+          {ikon:"🏆",ad:"1 Hafta",kos:streak<7,mesaj:`${7-streak} gün daha`},
+          {ikon:"👟",ad:"10K Adım",kos:state.adim<10000,mesaj:`${(10000-state.adim).toLocaleString("tr-TR")} adım daha`},
+        ].filter(x=>x.kos).map(r=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;background:#000;border:1px solid #1a1a1a;border-radius:8px;padding:8px 12px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:18px;opacity:.4">${r.ikon}</span>
+            <span style="font-size:12px;color:#555">${r.ad}</span>
+          </div>
+          <span style="font-size:11px;color:#888">${r.mesaj}</span>
+        </div>`).join("")}
+      </div>
+    </div>`:""}
+  </div>
+
+  <div class="card">
+    <div class="card-title">📊 Bugünkü Özet</div>
+    <div style="display:flex;flex-direction:column;gap:0">
+      ${[
+        {l:"🍽️ Alınan Kalori",v:`${d.topKal} kcal`,hedef:`Hedef: ${d.hedefKcal} kcal`,ok:d.topKal>0&&d.topKal<=d.hedefKcal},
+        {l:"🔥 Yakılan Kalori",v:`${d.topYak} kcal`,hedef:`${d.antrenmanlar||0} antrenman`,ok:d.topYak>0},
+        {l:"💧 Su",v:`${state.suMl>=1000?(state.suMl/1000).toFixed(1)+"L":state.suMl+"ml"}`,hedef:`Hedef: ${(state.suHedef/1000).toFixed(1)}L`,ok:state.suMl>=state.suHedef},
+        {l:"👟 Adım",v:state.adim.toLocaleString("tr-TR"),hedef:`Hedef: ${state.adimHedef.toLocaleString("tr-TR")}`,ok:state.adim>=state.adimHedef},
+        {l:"😴 Uyku",v:`${d.topUyu} saat`,hedef:"Hedef: 8 saat",ok:d.topUyu>=7},
+      ].map((r,i,arr)=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;${i<arr.length-1?"border-bottom:1px solid #1a1a1a":""}">
+        <div>
+          <div style="font-size:13px">${r.l}</div>
+          <div style="font-size:11px;color:#555;margin-top:2px">${r.hedef}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:13px;font-weight:700">${r.v}</span>
+          <span style="font-size:16px">${r.ok?"✅":"⭕"}</span>
+        </div>
+      </div>`).join("")}
+    </div>
+  </div>
+  <div style="height:8px"></div>`;
+}
+
+// ── TAB 6: ÖĞÜN PLANLAYICI ────────────────────────────────────────────────────
+function renderOgunPlan(){
+  const gunler=["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
+  const gun=state.planSecGun;
+  const plan=state.planHafta[gun]||[];
+
+  return`
+  <div class="card">
+    <div class="card-title">🗓️ Haftalık Öğün Planı</div>
+    <div style="display:flex;gap:4px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px">
+      ${gunler.map(g=>{
+        const gunPlan=state.planHafta[g]||[];
+        const topKal=gunPlan.reduce((s,o)=>s+(parseInt(o.kalori)||0),0);
+        return`<button data-plan-gun="${g}" style="flex-shrink:0;padding:8px 6px;border-radius:10px;border:1px solid ${gun===g?"#fff":"#222"};background:${gun===g?"#fff":"#000"};color:${gun===g?"#000":"#555"};cursor:pointer;text-align:center;min-width:52px">
+          <div style="font-size:10px;font-weight:700">${g.slice(0,3)}</div>
+          ${topKal>0?`<div style="font-size:9px;margin-top:2px;color:${gun===g?"#333":"#444"}">${topKal}k</div>`:`<div style="font-size:9px;margin-top:2px;color:#222">—</div>`}
+        </button>`;
+      }).join("")}
+    </div>
+
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#fff">${gun}</div>
+
+    <!-- Öğün ekle -->
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+      <input class="inp" id="plan-ogun-ad" type="text" placeholder="Öğün adı (örn: Kahvaltı, Ara Öğün...)" value="${state.planYeniOgun}"/>
+      <div style="display:flex;gap:8px">
+        <input class="inp" id="plan-ogun-kal" type="number" inputmode="decimal" placeholder="Tahmini kcal" value="${state.planYeniKalori}" style="flex:1"/>
+        <button id="btn-plan-ekle" style="background:#fff;border:none;border-radius:10px;padding:10px 16px;color:#000;font-weight:700;cursor:pointer;white-space:nowrap">+ Ekle</button>
+      </div>
+    </div>
+
+    <!-- Plan listesi -->
+    ${plan.length===0?`<div style="text-align:center;padding:16px 0;color:#555;font-size:13px">Bu gün için plan yok.</div>`:`
+    <div style="margin-bottom:10px">
+      ${plan.map(o=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #1a1a1a">
+        <div>
+          <div style="font-size:13px;font-weight:500">${o.ad}</div>
+          ${o.kalori?`<div style="font-size:11px;color:#555">${o.kalori} kcal</div>`:""}
+        </div>
+        <button data-del-plan="${o.id}" style="background:none;border:none;color:#f44;cursor:pointer;font-size:20px;padding:0 4px;line-height:1">×</button>
+      </div>`).join("")}
+      <div style="margin-top:8px;display:flex;justify-content:space-between;background:#000;border-radius:8px;padding:10px 12px">
+        <span style="font-size:12px;color:#888">Planlanan Toplam</span>
+        <span style="font-weight:700">${plan.reduce((s,o)=>s+(parseInt(o.kalori)||0),0)} kcal</span>
+      </div>
+    </div>`}
+
+    <!-- Alışveriş listesi -->
+    <div style="margin-top:4px">
+      <div style="font-size:12px;color:#555;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">🛒 Haftalık Alışveriş Özeti</div>
+      ${Object.keys(state.planHafta).length===0?`<div style="font-size:12px;color:#444;padding:8px 0">Plan ekledikten sonra burada görünür.</div>`:`
+      <div style="background:#000;border:1px solid #1a1a1a;border-radius:10px;padding:10px 12px">
+        ${[...new Set(Object.values(state.planHafta).flat().map(o=>o.ad))].map(ad=>`
+        <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #111">
+          <div style="width:8px;height:8px;border-radius:50%;background:#fff;flex-shrink:0"></div>
+          <span style="font-size:13px">${ad}</span>
+        </div>`).join("")}
+      </div>`}
+    </div>
+  </div>
+  <div style="height:8px"></div>`;
+}
+
+
+
+function updateFotoKarsilastir(){
+  const onceId=document.getElementById("foto-once")?.value;
+  const sonraId=document.getElementById("foto-sonra")?.value;
+  const wrap=document.getElementById("foto-karsilastir-wrap");
+  if(!wrap)return;
+  const once=state.fotograflar.find(f=>f.id==onceId);
+  const sonra=state.fotograflar.find(f=>f.id==sonraId);
+  if(!once||!sonra)return;
+  wrap.innerHTML=`
+    <div style="text-align:center">
+      <div style="font-size:10px;color:#555;margin-bottom:4px">${once.tarih}</div>
+      <img src="${once.veri}" style="width:100%;border-radius:10px;border:1px solid #333;aspect-ratio:3/4;object-fit:cover"/>
+    </div>
+    <div style="text-align:center">
+      <div style="font-size:10px;color:#555;margin-bottom:4px">${sonra.tarih}</div>
+      <img src="${sonra.veri}" style="width:100%;border-radius:10px;border:1px solid #333;aspect-ratio:3/4;object-fit:cover"/>
+    </div>`;
+}
+
+
+// ── TAB 8: PROGRAM ────────────────────────────────────────────────────────────
+const GUNLER=["Pazartesi","Salı","Çarşamba","Perşembe","Cuma","Cumartesi","Pazar"];
+const BUGUN_GUN=GUNLER[new Date().getDay()===0?6:new Date().getDay()-1];
+
+function oneriBeslenme(hedefKcal, gun){
+  const antGun=state.antProg[gun]?.tip==="antrenman";
+  // Makro dağılımı: antrenman günü daha fazla karb
+  const protein=Math.round(hedefKcal*(antGun?0.35:0.40)/4);
+  const karb=Math.round(hedefKcal*(antGun?0.40:0.30)/4);
+  const yag=Math.round(hedefKcal*(antGun?0.25:0.30)/9);
+
+  const sabahKcal=Math.round(hedefKcal*0.25);
+  const ogleKcal=Math.round(hedefKcal*0.35);
+  const aksamKcal=Math.round(hedefKcal*0.30);
+  const araKcal=Math.round(hedefKcal*0.10);
+
+  const oneriSabah=antGun
+    ?[`Yulaf ezmesi (80g) — ~300 kcal`,`3 yumurta haşlanmış — ~234 kcal`,`1 muz — ~90 kcal`]
+    :[`Greek yoğurt (200g) — ~120 kcal`,`2 yumurta — ~156 kcal`,`Tam buğday ekmek (2 dilim) — ~138 kcal`];
+  const oneriOgle=antGun
+    ?[`Tavuk göğsü (200g) — ~330 kcal`,`Pirinç (150g pişmiş) — ~195 kcal`,`Salata + zeytinyağı — ~80 kcal`]
+    :[`Somon (150g) — ~312 kcal`,`Bulgur (150g pişmiş) — ~125 kcal`,`Brokoli buğulama — ~50 kcal`];
+  const oneriAksam=antGun
+    ?[`Dana kıyma (150g) — ~375 kcal`,`Patates haşlanmış (200g) — ~174 kcal`,`Sebze sote — ~60 kcal`]
+    :[`Hindi göğsü (150g) — ~203 kcal`,`Kinoa (100g pişmiş) — ~120 kcal`,`Izgara sebze — ~80 kcal`];
+  const oneriAra=antGun
+    ?[`Protein bar — ~200 kcal`,`Badem (30g) — ~173 kcal`]
+    :[`Cottage cheese (150g) — ~147 kcal`,`Elma — ~52 kcal`];
+
+  return {protein,karb,yag,sabahKcal,ogleKcal,aksamKcal,araKcal,oneriSabah,oneriOgle,oneriAksam,oneriAra,antGun};
+}
+
+function renderProgram(d){
+  const gun=state.progSecGun;
+  const ant=state.antProg[gun]||{tip:"dinlenme",baslik:"",hareketler:[]};
+  const bes=state.besProg[gun]||[];
+  const bugunMu=gun===BUGUN_GUN;
+  const oneri=d.hedefKcal?oneriBeslenme(d.hedefKcal,gun):null;
+
+  // GÜN SELECTOR
+  const gunSec=`
+  <div style="display:flex;gap:4px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px;flex-shrink:0">
+    ${GUNLER.map(g=>{
+      const a=state.antProg[g]||{};
+      const bugun=g===BUGUN_GUN;
+      const renk=a.tip==="antrenman"?"#fff":a.tip==="dinlenme"?"#444":"#333";
+      return`<button data-prog-gun="${g}" style="flex-shrink:0;padding:8px 6px;border-radius:10px;border:2px solid ${gun===g?"#fff":"#222"};background:${gun===g?"#fff":"#000"};color:${gun===g?"#000":"#888"};cursor:pointer;text-align:center;min-width:52px;position:relative">
+        <div style="font-size:10px;font-weight:700">${g.slice(0,3)}</div>
+        <div style="font-size:9px;margin-top:2px;color:${gun===g?"#444":renk}">${a.tip==="antrenman"?"💪":"😴"}</div>
+        ${bugun?`<div style="position:absolute;top:-4px;right:-4px;width:8px;height:8px;background:#4ade80;border-radius:50%;border:1px solid #000"></div>`:""}
+      </button>`;
+    }).join("")}
+  </div>`;
+
+  // BUGÜN BANNER
+  const bugunBanner=bugunMu?`
+  <div style="background:${ant.tip==="antrenman"?"#0f2a0f":"#1a1a1a"};border:1px solid ${ant.tip==="antrenman"?"#4ade80":"#333"};border-radius:12px;padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px">
+    <span style="font-size:28px">${ant.tip==="antrenman"?"💪":"😴"}</span>
+    <div>
+      <div style="font-size:12px;color:${ant.tip==="antrenman"?"#4ade80":"#888"};font-weight:700;text-transform:uppercase;letter-spacing:1px">Bugün: ${ant.tip==="antrenman"?"ANTRENMAN GÜNÜ":"DİNLENME GÜNÜ"}</div>
+      <div style="font-size:14px;font-weight:700;margin-top:2px">${ant.baslik||"Program başlığı gir"}</div>
+    </div>
+  </div>`:"";
+
+  // ANTRENMAN PROGRAMI
+  const antKart=`
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <div class="card-title" style="margin-bottom:0">💪 Antrenman</div>
+      <div style="display:flex;gap:6px">
+        <button data-ant-tip="antrenman" style="padding:5px 10px;border-radius:8px;border:1px solid ${ant.tip==="antrenman"?"#fff":"#333"};background:${ant.tip==="antrenman"?"#fff":"#000"};color:${ant.tip==="antrenman"?"#000":"#666"};cursor:pointer;font-size:11px;font-weight:700">💪 Antrenman</button>
+        <button data-ant-tip="dinlenme" style="padding:5px 10px;border-radius:8px;border:1px solid ${ant.tip==="dinlenme"?"#fff":"#333"};background:${ant.tip==="dinlenme"?"#fff":"#000"};color:${ant.tip==="dinlenme"?"#000":"#666"};cursor:pointer;font-size:11px;font-weight:700">😴 Dinlenme</button>
+      </div>
+    </div>
+
+    <div style="margin-bottom:12px">
+      <label class="lbl">Başlık (örn: Göğüs & Triceps)</label>
+      <input class="inp" id="ant-baslik" type="text" value="${ant.baslik||""}" placeholder="Antrenman başlığı..." style="margin-top:4px"/>
+    </div>
+
+    ${ant.tip==="antrenman"?`
+    <div style="margin-bottom:12px">
+      <label class="lbl" style="margin-bottom:8px;display:block">Hareketler</label>
+      ${ant.hareketler.length>0?`
+      <div style="margin-bottom:10px">
+        ${ant.hareketler.map((h,i)=>`
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#000;border:1px solid #1a1a1a;border-radius:8px;margin-bottom:6px">
+          <div>
+            <div style="font-size:13px;font-weight:600">${h.ad}</div>
+            ${h.set&&h.rep?`<div style="font-size:11px;color:#555;margin-top:2px">${h.set} set × ${h.rep} tekrar</div>`:""}
+          </div>
+          <button data-del-hareket="${i}" style="background:none;border:none;color:#f44;cursor:pointer;font-size:20px;padding:0 4px">×</button>
+        </div>`).join("")}
+      </div>`:""}
+
+      <button id="btn-hareket-toggle" style="width:100%;padding:10px;border-radius:8px;border:1px dashed #333;background:#000;color:#666;cursor:pointer;font-size:12px">
+        ${state.progYeniAcik?"▲ Kapat":"➕ Hareket Ekle"}
+      </button>
+
+      ${state.progYeniAcik?`
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+        <input class="inp" id="prog-hareket-ad" type="text" placeholder="Hareket adı (örn: Bench Press)" value="${state.progYeniHareket}"/>
+        <div style="display:flex;gap:8px">
+          <input class="inp" id="prog-set" type="number" inputmode="decimal" placeholder="Set" value="${state.progYeniSet}" style="flex:1"/>
+          <input class="inp" id="prog-rep" type="number" inputmode="decimal" placeholder="Tekrar" value="${state.progYeniRep}" style="flex:1"/>
+          <button id="btn-hareket-ekle" style="background:#fff;border:none;border-radius:10px;padding:10px 16px;color:#000;font-weight:700;cursor:pointer">Ekle</button>
+        </div>
+      </div>`:""}
+    </div>`:`
+    <div style="text-align:center;padding:16px 0;color:#555;font-size:13px">😴 Bugün dinlenme günü. Kaslarını dinlendir!</div>`}
+
+    <button id="btn-ant-kaydet" style="width:100%;background:#fff;border:none;border-radius:12px;padding:12px;color:#000;font-weight:700;font-size:14px;cursor:pointer">💾 Programı Kaydet</button>
+  </div>`;
+
+  // BESLENME PROGRAMI
+  const besKart=`
+  <div class="card">
+    <div class="card-title">🍽️ Beslenme Programı</div>
+
+    ${bes.length>0?`
+    <div style="margin-bottom:12px">
+      ${bes.map(o=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#000;border:1px solid #1a1a1a;border-radius:8px;margin-bottom:6px">
+        <div>
+          <div style="font-size:13px;font-weight:600">${o.ogun}</div>
+          <div style="font-size:11px;color:#555;margin-top:2px">${o.icerik}</div>
+          ${o.kcal?`<div style="font-size:11px;color:#888;margin-top:1px">~${o.kcal} kcal</div>`:""}
+        </div>
+        <button data-del-bes-prog="${o.id}" style="background:none;border:none;color:#f44;cursor:pointer;font-size:20px;padding:0 4px">×</button>
+      </div>`).join("")}
+      <div style="background:#000;border:1px solid #222;border-radius:8px;padding:9px 12px;display:flex;justify-content:space-between">
+        <span style="font-size:12px;color:#666">Toplam</span>
+        <span style="font-size:13px;font-weight:700">${bes.reduce((s,o)=>s+(parseInt(o.kcal)||0),0)} kcal</span>
+      </div>
+    </div>`:`<div style="text-align:center;padding:8px 0 12px;color:#555;font-size:12px">Henüz manuel plan yok</div>`}
+
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px">
+      <input class="inp" id="bes-prog-ogun" type="text" placeholder="Öğün (örn: Kahvaltı, Öğle...)" value="${state.besProgYeniOgun}"/>
+      <input class="inp" id="bes-prog-icerik" type="text" placeholder="İçerik (örn: 2 yumurta, yulaf...)" value="${state.besProgYeniIcerik}"/>
+      <div style="display:flex;gap:8px">
+        <input class="inp" id="bes-prog-kcal" type="number" inputmode="decimal" placeholder="Tahmini kcal" value="${state.besProgYeniKcal}" style="flex:1"/>
+        <button id="btn-bes-prog-ekle" style="background:#fff;border:none;border-radius:10px;padding:10px 14px;color:#000;font-weight:700;cursor:pointer;white-space:nowrap">+ Ekle</button>
+      </div>
+    </div>
+  </div>`;
+
+  // OTOMATİK ÖNERİ
+  const oneriKart=oneri?`
+  <div class="card" style="border-color:#333">
+    <div class="card-title">✨ Kalori Hedefine Göre Öneri <span style="font-size:10px;color:#555;font-weight:400">(${d.hedefKcal} kcal)</span></div>
+    <div style="background:#000;border:1px solid #1a1a1a;border-radius:10px;padding:10px 12px;margin-bottom:12px">
+      <div style="font-size:11px;color:#555;margin-bottom:6px;text-transform:uppercase;letter-spacing:.7px">${oneri.antGun?"💪 Antrenman günü — daha fazla karb":"😴 Dinlenme günü — daha fazla protein"}</div>
+      <div style="display:flex;gap:8px">
+        ${[["Protein",oneri.protein+"g","#4ade80"],["Karb",oneri.karb+"g","#facc15"],["Yağ",oneri.yag+"g","#f472b6"]].map(([l,v,c])=>`
+        <div style="flex:1;background:#111;border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:14px;font-weight:700;color:${c}">${v}</div>
+          <div style="font-size:10px;color:#555">${l}</div>
+        </div>`).join("")}
+      </div>
+    </div>
+
+    ${[
+      {zaman:"🌅 Sabah",list:oneri.oneriSabah,kcal:oneri.sabahKcal},
+      {zaman:"☀️ Öğle",list:oneri.oneriOgle,kcal:oneri.ogleKcal},
+      {zaman:"🌙 Akşam",list:oneri.oneriAksam,kcal:oneri.aksamKcal},
+      {zaman:"🍎 Ara Öğün",list:oneri.oneriAra,kcal:oneri.araKcal},
+    ].map((ogn,i,arr)=>`
+    <div style="${i<arr.length-1?"border-bottom:1px solid #1a1a1a;margin-bottom:10px;padding-bottom:10px":""}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:13px;font-weight:700">${ogn.zaman}</span>
+        <span style="font-size:11px;color:#888">~${ogn.kcal} kcal</span>
+      </div>
+      ${ogn.list.map(y=>`<div style="font-size:12px;color:#666;padding:3px 0;padding-left:10px;border-left:2px solid #222">• ${y}</div>`).join("")}
+    </div>`).join("")}
+  </div>`:"";
+
+  return`
+  <div style="margin-bottom:12px">
+    ${gunSec}
+    ${bugunBanner}
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <button id="btn-prog-ant" style="flex:1;padding:10px;border-radius:10px;border:1px solid ${state.progAcik==="ant"?"#fff":"#222"};background:${state.progAcik==="ant"?"#fff":"#000"};color:${state.progAcik==="ant"?"#000":"#555"};cursor:pointer;font-weight:700;font-size:13px">💪 Antrenman</button>
+    <button id="btn-prog-bes" style="flex:1;padding:10px;border-radius:10px;border:1px solid ${state.progAcik==="bes"?"#fff":"#222"};background:${state.progAcik==="bes"?"#fff":"#000"};color:${state.progAcik==="bes"?"#000":"#555"};cursor:pointer;font-weight:700;font-size:13px">🍽️ Beslenme</button>
+  </div>
+  ${state.progAcik==="ant"?antKart:""}
+  ${state.progAcik==="bes"?besKart+oneriKart:""}
+  <div style="height:8px"></div>`;
+}
+
+
+// ── TAB 9: 1RM HESAPLAYICI ───────────────────────────────────────────────────
+const HAZIR_HAREKETLER=["Bench Press","Squat","Deadlift","Overhead Press","Barbell Row","Incline Press","Romanian Deadlift","Hip Thrust","Pull-up","Dumbbell Press"];
+
+function hesapla1RM(agirlik, tekrar){
+  const a=parseFloat(agirlik), t=parseInt(tekrar);
+  if(!a||!t||t<1)return null;
+  if(t===1)return a;
+  // Epley formülü
+  const epley=a*(1+t/30);
+  // Brzycki
+  const brzycki=a*(36/(37-t));
+  // Lander
+  const lander=(100*a)/(101.3-2.67123*t);
+  // Ortalama
+  return Math.round((epley+brzycki+lander)/3);
+}
+
+function yuzdeTablosu(rm){
+  return [100,95,90,85,80,75,70,65,60].map(pct=>({pct,agirlik:Math.round(rm*pct/100)}));
+}
+
+function render1RM(){
+  const rm=hesapla1RM(state.rm_agirlik, state.rm_tekrar);
+  const gecmis=state.rm_gecmis;
+  const hareket=state.rm_hareket;
+  const harGecmis=gecmis.filter(g=>g.hareket===hareket).sort((a,b)=>b.deger-a.deger);
+  const pr=harGecmis[0]?.deger||null;
+
+  return`
+  <div class="card">
+    <div class="card-title">🧮 1 Tekrar Maksimum</div>
+
+    <div style="margin-bottom:12px">
+      <label class="lbl">Hareket</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+        ${HAZIR_HAREKETLER.map(h=>`
+        <button data-rm-hareket="${h}" style="padding:6px 12px;border-radius:20px;border:1px solid ${hareket===h?"#fff":"#222"};background:${hareket===h?"#fff":"#000"};color:${hareket===h?"#000":"#555"};cursor:pointer;font-size:11px;font-weight:${hareket===h?700:400}">${h}</button>`).join("")}
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:12px">
+      <div>
+        <label class="lbl">Ağırlık (kg)</label>
+        <input class="inp" id="rm-agirlik" type="number" inputmode="decimal" value="${state.rm_agirlik}" placeholder="örn: 80" style="margin-top:4px"/>
+      </div>
+      <div>
+        <label class="lbl">Tekrar Sayısı</label>
+        <input class="inp" id="rm-tekrar" type="number" inputmode="decimal" value="${state.rm_tekrar}" placeholder="örn: 5" style="margin-top:4px"/>
+      </div>
+    </div>
+
+    ${rm?`
+    <div style="background:#000;border:1px solid #333;border-radius:14px;padding:16px;text-align:center;margin-bottom:12px;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,#ffffff0a,transparent 70%)"></div>
+      <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px">${hareket}</div>
+      <div style="font-size:52px;font-weight:700;line-height:1">${rm}</div>
+      <div style="font-size:13px;color:#888;margin-top:4px">kg tahmini 1RM</div>
+      ${pr&&rm>pr?`<div style="margin-top:8px;background:#0f2a0f;border:1px solid #4ade8066;border-radius:8px;padding:6px 12px;font-size:12px;color:#4ade80;display:inline-block">🏆 Yeni Kişisel Rekor!</div>`:""}
+      ${pr?`<div style="margin-top:6px;font-size:11px;color:#555">Mevcut PR: ${pr} kg</div>`:""}
+    </div>
+
+    <button id="btn-rm-kaydet" style="width:100%;background:#fff;border:none;border-radius:12px;padding:12px;color:#000;font-weight:700;font-size:14px;cursor:pointer;margin-bottom:12px">💾 PR Olarak Kaydet</button>
+
+    <div style="border:1px solid #1a1a1a;border-radius:12px;overflow:hidden">
+      <div style="padding:10px 14px;background:#0a0a0a;font-size:11px;color:#666;text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid #1a1a1a">Antrenman Ağırlık Tablosu</div>
+      ${yuzdeTablosu(rm).map((r,i)=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;${i<8?"border-bottom:1px solid #111":""}">
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="width:36px;height:36px;border-radius:8px;background:${r.pct===100?"#fff":r.pct>=90?"#e2e8f0":r.pct>=80?"#94a3b8":r.pct>=70?"#475569":"#1e293b"};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${r.pct>=80?"#000":"#fff"}">%${r.pct}</div>
+          <div>
+            <div style="font-size:13px;font-weight:600">${r.agirlik} kg</div>
+            <div style="font-size:11px;color:#555">${r.pct===100?"Maksimum":r.pct>=90?"Güç":r.pct>=80?"Hipertrofi (az tekrar)":r.pct>=70?"Hipertrofi":r.pct>=60?"Dayanıklılık":"Isınma"}</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:#555">${r.pct===100?"1":r.pct===95?"1-2":r.pct===90?"2-3":r.pct===85?"3-4":r.pct===80?"4-6":r.pct===75?"6-8":r.pct===70?"8-10":r.pct===65?"10-12":"12-15"} tekrar</div>
+      </div>`).join("")}
+    </div>`:`
+    <div style="text-align:center;padding:24px;color:#444;font-size:13px">
+      Ağırlık ve tekrar girerek 1RM hesapla
+    </div>`}
+  </div>
+
+  ${gecmis.length>0?`
+  <div class="card">
+    <div class="card-title">🏆 Kişisel Rekorlar</div>
+    ${HAZIR_HAREKETLER.filter(h=>gecmis.some(g=>g.hareket===h)).map(h=>{
+      const enIyi=gecmis.filter(g=>g.hareket===h).sort((a,b)=>b.deger-a.deger)[0];
+      return`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid #111">
+        <div>
+          <div style="font-size:13px;font-weight:600">${h}</div>
+          <div style="font-size:11px;color:#555;margin-top:2px">${enIyi.tarih}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px;font-weight:700">${enIyi.deger} kg</span>
+          <button data-del-rm="${enIyi.id}" style="background:none;border:none;color:#f44;cursor:pointer;font-size:18px;padding:0 2px">×</button>
+        </div>
+      </div>`;
+    }).join("")}
+  </div>`:""}
+  <div style="height:8px"></div>`;
+}
+
+// ── TAB 10: HAFTALIK RAPOR ────────────────────────────────────────────────────
+function renderRapor(d){
+  const streak=hesaplaStreak();
+  const prSayisi=state.rm_gecmis.length;
+  const sonOlcum=getSonOlcum();
+  const bugunD=new Date();
+  const haftaBaslangic=new Date(bugunD);
+  haftaBaslangic.setDate(bugunD.getDate()-(bugunD.getDay()===0?6:bugunD.getDay()-1));
+  haftaBaslangic.setHours(0,0,0,0);
+  const haftaGiris=state.streakGunler.filter(g=>new Date(g)>=haftaBaslangic).length;
+  const sek=state.raporAltSekme||"foto";
+  const fotolar=state.fotograflar;
+
+  const fotoHTML=`
+  <div class="card">
+    <div class="card-title">📸 Fotoğraf Ekle</div>
+    <div style="margin-bottom:10px">
+      <label class="lbl">Tarih</label>
+      <input class="inp" type="date" id="foto-tarih" value="${new Date().toISOString().split("T")[0]}" style="margin-top:4px"/>
+    </div>
+    <label style="display:flex;align-items:center;justify-content:center;gap:10px;border:2px dashed #333;border-radius:12px;padding:24px;cursor:pointer;color:#777;font-size:14px;font-weight:600" for="foto-input">
+      <span style="font-size:32px">📷</span><span>Fotoğraf seç veya çek</span>
+      <input type="file" id="foto-input" accept="image/*" capture="environment" style="display:none"/>
+    </label>
+    <div id="foto-onizleme" style="margin-top:10px;display:none">
+      <img id="foto-onizleme-img" style="width:100%;border-radius:10px;border:1px solid #333;max-height:260px;object-fit:cover"/>
+      <button class="btn" id="btn-foto-kaydet" style="margin-top:8px">💾 Kaydet</button>
+    </div>
+  </div>
+  ${fotolar.length>=2?`
+  <div class="card">
+    <div class="card-title">🔄 Önce / Sonra</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div style="flex:1"><label class="lbl">Önceki</label>
+        <select class="inp" id="foto-once" style="margin-top:4px">${fotolar.map(f=>`<option value="${f.id}">${f.tarih}</option>`).join("")}</select>
+      </div>
+      <div style="flex:1"><label class="lbl">Sonraki</label>
+        <select class="inp" id="foto-sonra" style="margin-top:4px">${[...fotolar].reverse().map(f=>`<option value="${f.id}">${f.tarih}</option>`).join("")}</select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="foto-karsilastir-wrap">
+      <div style="text-align:center">
+        <div style="font-size:10px;color:#555;margin-bottom:4px">${fotolar[0].tarih}</div>
+        <img src="${fotolar[0].veri}" style="width:100%;border-radius:10px;border:1px solid #333;aspect-ratio:3/4;object-fit:cover"/>
+      </div>
+      <div style="text-align:center">
+        <div style="font-size:10px;color:#555;margin-bottom:4px">${fotolar[fotolar.length-1].tarih}</div>
+        <img src="${fotolar[fotolar.length-1].veri}" style="width:100%;border-radius:10px;border:1px solid #333;aspect-ratio:3/4;object-fit:cover"/>
+      </div>
+    </div>
+  </div>`:""}
+  ${fotolar.length>0?`
+  <div class="card">
+    <div class="card-title">🗂️ Tüm Fotoğraflar (${fotolar.length})</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">
+      ${[...fotolar].reverse().map(f=>`
+      <div style="position:relative">
+        <img src="${f.veri}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:8px;border:1px solid #222"/>
+        <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,#000c);border-radius:0 0 8px 8px;padding:4px;font-size:9px;color:#aaa;text-align:center">${f.tarih}</div>
+        <button data-del-foto="${f.id}" style="position:absolute;top:4px;right:4px;background:#000c;border:none;border-radius:50%;width:22px;height:22px;color:#f44;cursor:pointer;font-size:16px;line-height:22px;text-align:center">×</button>
+      </div>`).join("")}
+    </div>
+  </div>`:`
+  <div class="card" style="text-align:center;padding:28px 16px">
+    <div style="font-size:48px;margin-bottom:10px">📸</div>
+    <div style="color:#555;font-size:13px">Henüz fotoğraf yok.<br>Yukarıdan ilk fotoğrafını ekle!</div>
+  </div>`}`;
+
+  const ozetHTML=`
+  <div class="card">
+    <div class="card-title">📊 Haftalık Özet</div>
+    <div style="background:#000;border:1px solid #333;border-radius:16px;padding:20px;margin-bottom:14px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#ffffff08,transparent)"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+        <div>
+          <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:2px">Haftalık Özet</div>
+          <div style="font-size:16px;font-weight:700;margin-top:2px">${d.profil&&d.profil.ad||"Sporcu"} 💪</div>
+          <div style="font-size:11px;color:#555;margin-top:1px">${new Date().toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"})}</div>
+        </div>
+        <div style="font-size:32px">🏋️</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+        ${[
+          {ikon:"🔥",val:streak,lbl:"Gün Serisi"},
+          {ikon:"📅",val:haftaGiris+"/7",lbl:"Bu Hafta"},
+          {ikon:"📏",val:state.olcumGecmisi.length,lbl:"Ölçüm"},
+          {ikon:"🏆",val:prSayisi,lbl:"PR"},
+        ].map(s=>`<div style="background:#111;border-radius:10px;padding:12px;border:1px solid #1a1a1a">
+          <div style="font-size:20px;margin-bottom:4px">${s.ikon}</div>
+          <div style="font-size:20px;font-weight:700">${s.val}</div>
+          <div style="font-size:10px;color:#555;margin-top:2px">${s.lbl}</div>
+        </div>`).join("")}
+      </div>
+      <div style="background:#111;border-radius:10px;padding:12px;border:1px solid #1a1a1a">
+        <div style="font-size:10px;color:#555;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Bugün</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          ${[
+            {ikon:"🍽️",lbl:"Kalori",val:d.topKal+"/"+d.hedefKcal+" kcal",ok:d.topKal>0&&d.topKal<=d.hedefKcal},
+            {ikon:"💧",lbl:"Su",val:state.suMl>=1000?(state.suMl/1000).toFixed(1)+"L":state.suMl+"ml",ok:state.suMl>=state.suHedef},
+            {ikon:"👟",lbl:"Adım",val:state.adim.toLocaleString("tr-TR"),ok:state.adim>=state.adimHedef},
+            {ikon:"😴",lbl:"Uyku",val:d.topUyu+"sa",ok:d.topUyu>=7},
+          ].map(s=>`<div style="display:flex;align-items:center;gap:5px;background:#000;border-radius:8px;padding:6px 9px;border:1px solid ${s.ok?"#4ade8033":"#1a1a1a"}">
+            <span style="font-size:14px">${s.ikon}</span>
+            <div><div style="font-size:10px;color:#555">${s.lbl}</div><div style="font-size:12px;font-weight:600;color:${s.ok?"#4ade80":"#fff"}">${s.val}</div></div>
+          </div>`).join("")}
+        </div>
+      </div>
+      <div style="margin-top:12px;text-align:center;font-size:10px;color:#333;letter-spacing:1px">SAĞLIK TAKİBİ APP</div>
+    </div>
+    <button id="btn-rapor-indir" class="btn" style="margin-bottom:8px">📸 Ekran Görüntüsü Al</button>
+    <div style="font-size:11px;color:#555;text-align:center;margin-bottom:12px">Kartın ekran görüntüsünü alarak paylaşabilirsin</div>
+    <button id="btn-rapor-kopyala" class="btn btn-outline">📋 Metin Özetini Kopyala</button>
+    <div id="kopyala-bilgi" style="display:none;margin-top:8px;background:#0f2a0f;border:1px solid #4ade8066;border-radius:8px;padding:8px 12px;text-align:center;font-size:12px;color:#4ade80">✅ Panoya kopyalandı!</div>
+  </div>`;
+
+  return`
+  <div style="display:flex;gap:8px;margin-bottom:14px">
+    <button id="btn-rapor-sekme-foto" style="flex:1;padding:12px;border-radius:12px;border:1px solid ${sek==="foto"?"#fff":"#222"};background:${sek==="foto"?"#fff":"#000"};color:${sek==="foto"?"#000":"#555"};cursor:pointer;font-weight:700;font-size:14px">📸 Fotoğraflar</button>
+    <button id="btn-rapor-sekme-ozet" style="flex:1;padding:12px;border-radius:12px;border:1px solid ${sek==="ozet"?"#fff":"#222"};background:${sek==="ozet"?"#fff":"#000"};color:${sek==="ozet"?"#000":"#555"};cursor:pointer;font-weight:700;font-size:14px">📊 Özet</button>
+  </div>
+  ${sek==="foto"?fotoHTML:ozetHTML}
+  <div style="height:8px"></div>`;
+}
+
+// ── BAŞLAT ────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
