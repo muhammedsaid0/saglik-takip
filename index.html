@@ -969,19 +969,19 @@ function renderYagYakim(d){
           <!-- Bar -->
           <div style="position:relative;height:20px;border-radius:99px;overflow:hidden;margin-bottom:6px">
             <!-- Sol: 0'dan hedefe kadar YEŞİL -->
-            <div style="position:absolute;left:0;top:0;height:100%;width:${hedefPct}%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div>
+            <div id="yag-bar-yesil" style="position:absolute;left:0;top:0;height:100%;width:${hedefPct}%;background:linear-gradient(90deg,#4ade80,#22c55e)"></div>
             <!-- Orta: hedeften mevcuta kadar KIRMIZI -->
-            <div style="position:absolute;left:${hedefPct}%;top:0;height:100%;width:${Math.max(mevcutPct-hedefPct,0)}%;background:#f87171"></div>
+            <div id="yag-bar-kirmizi" style="position:absolute;left:${hedefPct}%;top:0;height:100%;width:${Math.max(mevcutPct-hedefPct,0)}%;background:#f87171"></div>
             <!-- Sağ: mevcuttan sonrası BEYAZ -->
-            <div style="position:absolute;left:${mevcutPct}%;top:0;height:100%;width:${100-mevcutPct}%;background:#fff"></div>
+            <div id="yag-bar-beyaz" style="position:absolute;left:${mevcutPct}%;top:0;height:100%;width:${100-mevcutPct}%;background:#fff"></div>
             <!-- Mevcut yağ sabit ince çizgi -->
-            <div style="position:absolute;left:${mevcutPct}%;top:0;width:3px;height:100%;background:#000;transform:translateX(-50%);z-index:2"></div>
+            <div id="yag-bar-cizgi" style="position:absolute;left:${mevcutPct}%;top:0;width:3px;height:100%;background:#000;transform:translateX(-50%);z-index:2"></div>
           </div>
           <!-- Hedef slider -->
           <input type="range" min="${minYag}" max="50" step="0.1" value="${d.hYag}" id="hedef-yag-range"
             style="width:100%;accent-color:#f87171;margin:2px 0"/>
           <div style="display:flex;justify-content:space-between;font-size:10px;margin-top:6px">
-            <span style="color:#f87171">🎯 Hedef: %${d.hYag}</span>
+            <span id="yag-hedef-lbl" style="color:#f87171">🎯 Hedef: %${d.hYag}</span>
             <span style="color:#fff">📍 Mevcut: %${d.yo}</span>
           </div>`;
         })()}
@@ -1215,7 +1215,31 @@ function attachEvents(){
   });
 
   // Yağ yakımı
-  document.getElementById("hedef-yag-range")?.addEventListener("input",e=>{state.hedefYag=e.target.value;render();});
+  const yagSlider=document.getElementById("hedef-yag-range");
+  if(yagSlider){
+    yagSlider.addEventListener("input",e=>{
+      state.hedefYag=e.target.value;
+      // Sadece bar renklerini güncelle, full render yok
+      const barMax=50;
+      const yo=parseFloat(state.profil?.yo)||parseFloat(document.querySelector(".lbl2")?.textContent)||0;
+      const mevcutPct=(parseFloat(state.rm_agirlik)||0);
+      const hYag=parseFloat(e.target.value);
+      // Bar elementlerini bul ve güncelle
+      const bars=document.querySelectorAll("#yag-bar-yesil,#yag-bar-kirmizi,#yag-bar-beyaz,#yag-bar-cizgi");
+      if(bars.length===4){
+        const d2=getDerived();
+        const mPct=(d2.yo/barMax)*100;
+        const hPct=(hYag/barMax)*100;
+        bars[0].style.width=hPct+"%";
+        bars[1].style.left=hPct+"%";
+        bars[1].style.width=Math.max(mPct-hPct,0)+"%";
+        // label güncelle
+        const lbl=document.getElementById("yag-hedef-lbl");
+        if(lbl)lbl.textContent="🎯 Hedef: %"+hYag;
+      }
+    });
+    yagSlider.addEventListener("change",e=>{state.hedefYag=e.target.value;render();});
+  }
   document.getElementById("hedef-tarih")?.addEventListener("change",e=>{state.hedefTarih=e.target.value;render();});
 
   // ── FOTOĞRAF EVENTS ──
